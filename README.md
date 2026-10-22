@@ -141,7 +141,7 @@ detection.py         QRS detector evaluation + fully automatic pipeline
 train.py             CNN training (3 seeds)
 evaluate.py          ensemble, DS2 + SVDB evaluation, per-patient analysis
 scripts/             data downloads, full pipeline, comparison plot
-results/             metrics (JSON), confusion matrices, plots, final_results.md
+results/             metrics, plots and final_results.md (see results/README.md for an index)
 ```
 
 ## Data and reference
@@ -151,6 +151,10 @@ results/             metrics (JSON), confusion matrices, plots, final_results.md
 - Goldberger AL et al. PhysioBank, PhysioToolkit, and PhysioNet. *Circulation* 101(23):e215–e220, 2000.
 - de Chazal P, O'Dwyer M, Reilly RB. Automatic classification of heartbeats using ECG morphology and heartbeat
   interval features. *IEEE Trans Biomed Eng* 51(7):1196–1206, 2004.
+
+## License
+Code: MIT (see `LICENSE`). The ECG data are not included; they are distributed by PhysioNet under their own licenses.
+This is a research/portfolio project and is not a medical device.
 
 ## Author
 **Amina El Hasnaouy** · Software Engineering, Sichuan University · [GitHub](https://github.com/AMINA-ELHASNAOUY)
