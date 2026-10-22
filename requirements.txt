@@ -1,0 +1,6 @@
+torch>=2.2
+wfdb>=4.1
+numpy
+scipy
+scikit-learn
+matplotlib

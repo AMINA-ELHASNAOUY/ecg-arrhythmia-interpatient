@@ -1,0 +1,61 @@
+{
+  "accuracy": 0.9385,
+  "macro_f1": 0.5373,
+  "per_class": {
+    "N": {
+      "support": 44218,
+      "sensitivity": 0.9819,
+      "ppv": 0.9595,
+      "f1": 0.9705
+    },
+    "S": {
+      "support": 1836,
+      "sensitivity": 0.1863,
+      "ppv": 0.2573,
+      "f1": 0.2161
+    },
+    "V": {
+      "support": 3219,
+      "sensitivity": 0.8816,
+      "ppv": 0.9624,
+      "f1": 0.9202
+    },
+    "F": {
+      "support": 388,
+      "sensitivity": 0.0284,
+      "ppv": 0.0833,
+      "f1": 0.0423
+    }
+  },
+  "confusion_matrix": [
+    [
+      43417,
+      709,
+      16,
+      76
+    ],
+    [
+      1482,
+      342,
+      10,
+      2
+    ],
+    [
+      62,
+      276,
+      2838,
+      43
+    ],
+    [
+      290,
+      2,
+      85,
+      11
+    ]
+  ],
+  "seed": 0,
+  "best_val_f1_NSV": 0.6048333333333334,
+  "epochs_run": 24,
+  "train_seconds_all_seeds": 206.2,
+  "device": "mps"
+}
