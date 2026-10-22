@@ -1,0 +1,404 @@
+{
+  "summary": {
+    "records": 44,
+    "reference_beats": 100733,
+    "sensitivity": 0.99174,
+    "ppv": 0.99288,
+    "worst_records": [
+      {
+        "record": 207,
+        "reference_beats": 1860,
+        "detected": 2198,
+        "tp": 1811,
+        "fn": 49,
+        "fp": 387
+      },
+      {
+        "record": 108,
+        "reference_beats": 1763,
+        "detected": 1918,
+        "tp": 1677,
+        "fn": 86,
+        "fp": 241
+      },
+      {
+        "record": 208,
+        "reference_beats": 2955,
+        "detected": 2729,
+        "tp": 2723,
+        "fn": 232,
+        "fp": 6
+      },
+      {
+        "record": 106,
+        "reference_beats": 2027,
+        "detected": 1940,
+        "tp": 1939,
+        "fn": 88,
+        "fp": 1
+      },
+      {
+        "record": 203,
+        "reference_beats": 2980,
+        "detected": 2932,
+        "tp": 2914,
+        "fn": 66,
+        "fp": 18
+      }
+    ]
+  },
+  "per_record": [
+    {
+      "record": 101,
+      "reference_beats": 1865,
+      "detected": 1868,
+      "tp": 1864,
+      "fn": 1,
+      "fp": 4
+    },
+    {
+      "record": 106,
+      "reference_beats": 2027,
+      "detected": 1940,
+      "tp": 1939,
+      "fn": 88,
+      "fp": 1
+    },
+    {
+      "record": 109,
+      "reference_beats": 2532,
+      "detected": 2527,
+      "tp": 2527,
+      "fn": 5,
+      "fp": 0
+    },
+    {
+      "record": 112,
+      "reference_beats": 2539,
+      "detected": 2540,
+      "tp": 2539,
+      "fn": 0,
+      "fp": 1
+    },
+    {
+      "record": 114,
+      "reference_beats": 1879,
+      "detected": 1878,
+      "tp": 1878,
+      "fn": 1,
+      "fp": 0
+    },
+    {
+      "record": 115,
+      "reference_beats": 1953,
+      "detected": 1953,
+      "tp": 1953,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 116,
+      "reference_beats": 2412,
+      "detected": 2391,
+      "tp": 2389,
+      "fn": 23,
+      "fp": 2
+    },
+    {
+      "record": 119,
+      "reference_beats": 1987,
+      "detected": 1987,
+      "tp": 1987,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 122,
+      "reference_beats": 2476,
+      "detected": 2477,
+      "tp": 2476,
+      "fn": 0,
+      "fp": 1
+    },
+    {
+      "record": 124,
+      "reference_beats": 1619,
+      "detected": 1590,
+      "tp": 1590,
+      "fn": 29,
+      "fp": 0
+    },
+    {
+      "record": 201,
+      "reference_beats": 1963,
+      "detected": 1887,
+      "tp": 1887,
+      "fn": 76,
+      "fp": 0
+    },
+    {
+      "record": 203,
+      "reference_beats": 2980,
+      "detected": 2932,
+      "tp": 2914,
+      "fn": 66,
+      "fp": 18
+    },
+    {
+      "record": 205,
+      "reference_beats": 2656,
+      "detected": 2652,
+      "tp": 2652,
+      "fn": 4,
+      "fp": 0
+    },
+    {
+      "record": 208,
+      "reference_beats": 2955,
+      "detected": 2729,
+      "tp": 2723,
+      "fn": 232,
+      "fp": 6
+    },
+    {
+      "record": 209,
+      "reference_beats": 3005,
+      "detected": 3005,
+      "tp": 3005,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 215,
+      "reference_beats": 3363,
+      "detected": 3361,
+      "tp": 3361,
+      "fn": 2,
+      "fp": 0
+    },
+    {
+      "record": 220,
+      "reference_beats": 2048,
+      "detected": 2047,
+      "tp": 2047,
+      "fn": 1,
+      "fp": 0
+    },
+    {
+      "record": 230,
+      "reference_beats": 2256,
+      "detected": 2256,
+      "tp": 2256,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 108,
+      "reference_beats": 1763,
+      "detected": 1918,
+      "tp": 1677,
+      "fn": 86,
+      "fp": 241
+    },
+    {
+      "record": 118,
+      "reference_beats": 2278,
+      "detected": 2277,
+      "tp": 2277,
+      "fn": 1,
+      "fp": 0
+    },
+    {
+      "record": 207,
+      "reference_beats": 1860,
+      "detected": 2198,
+      "tp": 1811,
+      "fn": 49,
+      "fp": 387
+    },
+    {
+      "record": 223,
+      "reference_beats": 2605,
+      "detected": 2602,
+      "tp": 2602,
+      "fn": 3,
+      "fp": 0
+    },
+    {
+      "record": 100,
+      "reference_beats": 2273,
+      "detected": 2273,
+      "tp": 2273,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 103,
+      "reference_beats": 2084,
+      "detected": 2082,
+      "tp": 2082,
+      "fn": 2,
+      "fp": 0
+    },
+    {
+      "record": 105,
+      "reference_beats": 2572,
+      "detected": 2602,
+      "tp": 2569,
+      "fn": 3,
+      "fp": 33
+    },
+    {
+      "record": 111,
+      "reference_beats": 2124,
+      "detected": 2123,
+      "tp": 2123,
+      "fn": 1,
+      "fp": 0
+    },
+    {
+      "record": 113,
+      "reference_beats": 1795,
+      "detected": 1795,
+      "tp": 1795,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 117,
+      "reference_beats": 1535,
+      "detected": 1535,
+      "tp": 1535,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 121,
+      "reference_beats": 1863,
+      "detected": 1863,
+      "tp": 1862,
+      "fn": 1,
+      "fp": 1
+    },
+    {
+      "record": 123,
+      "reference_beats": 1518,
+      "detected": 1515,
+      "tp": 1515,
+      "fn": 3,
+      "fp": 0
+    },
+    {
+      "record": 200,
+      "reference_beats": 2601,
+      "detected": 2599,
+      "tp": 2598,
+      "fn": 3,
+      "fp": 1
+    },
+    {
+      "record": 202,
+      "reference_beats": 2136,
+      "detected": 2126,
+      "tp": 2126,
+      "fn": 10,
+      "fp": 0
+    },
+    {
+      "record": 210,
+      "reference_beats": 2650,
+      "detected": 2594,
+      "tp": 2590,
+      "fn": 60,
+      "fp": 4
+    },
+    {
+      "record": 212,
+      "reference_beats": 2748,
+      "detected": 2748,
+      "tp": 2748,
+      "fn": 0,
+      "fp": 0
+    },
+    {
+      "record": 213,
+      "reference_beats": 3251,
+      "detected": 3244,
+      "tp": 3244,
+      "fn": 7,
+      "fp": 0
+    },
+    {
+      "record": 214,
+      "reference_beats": 2262,
+      "detected": 2253,
+      "tp": 2253,
+      "fn": 9,
+      "fp": 0
+    },
+    {
+      "record": 219,
+      "reference_beats": 2154,
+      "detected": 2146,
+      "tp": 2146,
+      "fn": 8,
+      "fp": 0
+    },
+    {
+      "record": 221,
+      "reference_beats": 2427,
+      "detected": 2396,
+      "tp": 2396,
+      "fn": 31,
+      "fp": 0
+    },
+    {
+      "record": 222,
+      "reference_beats": 2483,
+      "detected": 2482,
+      "tp": 2481,
+      "fn": 2,
+      "fp": 1
+    },
+    {
+      "record": 228,
+      "reference_beats": 2053,
+      "detected": 2061,
+      "tp": 2048,
+      "fn": 5,
+      "fp": 13
+    },
+    {
+      "record": 231,
+      "reference_beats": 1571,
+      "detected": 1570,
+      "tp": 1570,
+      "fn": 1,
+      "fp": 0
+    },
+    {
+      "record": 232,
+      "reference_beats": 1780,
+      "detected": 1781,
+      "tp": 1779,
+      "fn": 1,
+      "fp": 2
+    },
+    {
+      "record": 233,
+      "reference_beats": 3079,
+      "detected": 3064,
+      "tp": 3064,
+      "fn": 15,
+      "fp": 0
+    },
+    {
+      "record": 234,
+      "reference_beats": 2753,
+      "detected": 2750,
+      "tp": 2750,
+      "fn": 3,
+      "fp": 0
+    }
+  ]
+}

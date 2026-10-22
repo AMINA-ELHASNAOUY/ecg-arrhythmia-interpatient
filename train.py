@@ -125,6 +125,11 @@ def main():
         print(f"seed {seed}: DS2 acc {rep['accuracy']:.3f}  macro-F1 {rep['macro_f1']:.3f}  " +
               "  ".join(f"{c} {v['sensitivity']:.2f}/{v['ppv']:.2f}" for c, v in rep["per_class"].items()))
 
+    # every seed is kept for the seed-averaged CNN used by evaluate.py
+    for i, (_, m, _) in enumerate(runs):
+        torch.save(m.state_dict(), RESULTS / f"beatnet_seed{i}.pt")
+    np.savez(RESULTS / "feature_norm.npz", mu=mu, sd=sd)
+
     # The model kept for plots/weights is chosen by VALIDATION score, never by test score.
     rep, model, history = max(runs, key=lambda r: r[0]["best_val_f1_NSV"])
     torch.save(model.state_dict(), RESULTS / "beatnet.pt")
