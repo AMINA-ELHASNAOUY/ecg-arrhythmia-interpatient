@@ -5,6 +5,17 @@ Heartbeat classification (AAMI classes **N, S, V, F**) evaluated the way it woul
 
 ![Model comparison](results/model_comparison.png)
 
+## Why I built this
+I'm a software engineering student at Sichuan University, and I work as an intern on a hospital
+teleconsultation platform. My own research looks at how unreliable or incomplete clinical data affects
+AI-assisted clinical decisions. One question keeps coming back in that work: *does a model still hold up
+when it meets a patient it has never seen?*
+
+ECG classification is a good place to test that honestly. MIT-BIH is public and well documented, and many
+published results look near-perfect only because the same patients appear in training and testing. I wanted a
+project that uses the strict unseen-patient evaluation from the start, finds out *why* models fail on new
+patients, and writes down what I learned, including the parts that did not work.
+
 ## Why inter-patient matters
 Many MIT-BIH papers shuffle all beats and split them randomly, so beats from the same patient appear in
 both training and test sets. Accuracy then looks close to 99% but mostly measures how well the model
@@ -63,6 +74,12 @@ Test support: N 44,218 · S 1,836 · V 3,219 · F 388.
 - R-peak positions come from the expert annotations, not from an automatic detector.
 - The S class in DS2 is dominated by one patient (232), so S metrics are sensitive to that record.
 
+## Next steps
+- [ ] Ensemble: logistic regression for S detection + CNN for N/V precision
+- [ ] Per-patient error analysis (which records fail, and why)
+- [ ] External validation on a second database (St Petersburg INCART)
+- [ ] Automatic R-peak detection instead of annotated peaks
+
 ## Reproduce
 ```bash
 python3.12 -m venv .venv && source .venv/bin/activate
@@ -88,3 +105,6 @@ results/           metrics (JSON), confusion matrices, training curve
 - Goldberger AL et al. PhysioBank, PhysioToolkit, and PhysioNet. *Circulation* 101(23):e215–e220, 2000.
 - de Chazal P, O'Dwyer M, Reilly RB. Automatic classification of heartbeats using ECG morphology and heartbeat
   interval features. *IEEE Trans Biomed Eng* 51(7):1196–1206, 2004.
+
+## Author
+**Amina El Hasnaouy** · Software Engineering, Sichuan University · [GitHub](https://github.com/AMINA-ELHASNAOUY)
