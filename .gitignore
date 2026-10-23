@@ -6,3 +6,4 @@ __pycache__/
 results/RUN_DONE
 results/run_log.txt
 results/eval_log.txt
+results/extensions_log.txt

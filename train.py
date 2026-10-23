@@ -5,6 +5,7 @@ Runs 10 seeds and reports mean +- std, so the numbers are not one lucky run. eva
 
     python train.py               # main pipeline: lead A, 10 seeds
     python train.py --leads 2     # multi-lead experiment
+    python train.py --realtime --seeds 5   # real-time features (past beats only), used by extensions.py
     python train.py --seeds 1 --epochs 3   # quick smoke test
 """
 import argparse
@@ -109,15 +110,17 @@ def main():
     ap.add_argument("--seeds", type=int, default=10)
     ap.add_argument("--leads", type=int, default=1, choices=[1, 2],
                     help="1 = lead A only (main pipeline), 2 = both leads (multi-lead experiment)")
+    ap.add_argument("--realtime", action="store_true",
+                    help="features from past beats only (plus the next R peak); lead A only")
     args = ap.parse_args()
 
     dev = device()
-    d = load_splits()
+    d = load_splits(realtime=args.realtime)
     if args.leads == 1:                      # keep lead A channels and the single-lead feature set
         for s in ["train", "val", "test"]:
             d[f"{s}_x"] = d[f"{s}_x"][:, :2]
             d[f"{s}_f"] = d[f"{s}_f"][:, :N_LEAD_A_FEATURES]
-    tag = "" if args.leads == 1 else "_2lead"
+    tag = ("" if args.leads == 1 else "_2lead") + ("_realtime" if args.realtime else "")
     print(f"CNN with {args.leads} lead(s): input channels {d['train_x'].shape[1]}, features {d['train_f'].shape[1]}")
     for s in ["train", "val", "test"]:
         print(f"{s:5s}", dict(zip(CLASSES, np.bincount(d[f'{s}_y'], minlength=4).tolist())))

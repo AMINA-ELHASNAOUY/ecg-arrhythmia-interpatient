@@ -44,8 +44,11 @@ class AFDetector:
         self.model = CANDIDATES[self.name]().fit(r, af)
         return self
 
+    def predict_proba(self, r):
+        return self.model.predict_proba(r)[:, 1]
+
     def predict(self, r):
-        return self.model.predict_proba(r)[:, 1] > self.threshold
+        return self.predict_proba(r) > self.threshold
 
     def summary(self):
         return {"chosen": self.name, "threshold": self.threshold, "cross_validation": self.cv}

@@ -37,6 +37,11 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 MITDB_DIR = DATA_DIR / "mitdb"
 SVDB_DIR = DATA_DIR / "svdb"
 INCART_DIR = DATA_DIR / "incart"
+NSTDB_DIR = DATA_DIR / "nstdb"          # MIT-BIH Noise Stress Test Database (extensions.py)
+AFDB_DIR = DATA_DIR / "afdb"            # MIT-BIH Atrial Fibrillation Database (extensions.py)
+NSTDB_RECORDS = [f"118e{snr}" for snr in ("24", "18", "12", "06", "00", "_6")]   # 118: DS1 hold-out, never trained on
+AFDB_RECORDS = ["04015", "04043", "04048", "04126", "04746", "04908", "04936", "05091", "05121", "05261", "06426",
+                "06453", "06995", "07162", "07859", "07879", "07910", "08215", "08219", "08378", "08405", "08434", "08455"]
 
 FS = 360                         # everything is resampled to 360 Hz
 BEFORE, AFTER = 90, 166          # 256 samples per beat, R peak at index 90
@@ -75,7 +80,7 @@ DS2 = [100, 103, 105, 111, 113, 117, 121, 123, 200, 202, 210, 212, 213, 214,
 # DS1 patients held out for early stopping / ensemble weighting (never trained on, never DS2).
 VAL = [108, 118, 207, 223]
 
-LEADS = {"mitdb": ("MLII", None), "svdb": ("ECG1", "ECG2"), "incart": ("II", "V1")}
+LEADS = {"mitdb": ("MLII", None), "svdb": ("ECG1", "ECG2"), "incart": ("II", "V1"), "nstdb": ("MLII", None)}
 
 
 # ---------------------------------------------------------------- signal
@@ -225,28 +230,85 @@ def _autocorr(x, lag):
     return float((x[:-lag] * x[lag:]).sum() / ((x * x).sum() + 1e-9)) if len(x) > lag else 0.0
 
 
-def _smooth(v, k=RHYTHM_W):
+def _smooth(v, k=RHYTHM_W, causal=False):
+    if causal:                                       # trailing mean over the current and 2k previous beats
+        c = np.cumsum(np.r_[0.0, v])
+        idx = np.arange(1, len(v) + 1)
+        lo = np.maximum(0, idx - (2 * k + 1))
+        return (c[idx] - c[lo]) / (idx - lo)
     pad = np.pad(v, k, mode="edge")
     return np.convolve(pad, np.ones(2 * k + 1) / (2 * k + 1), "valid")
 
 
-def _pwave_features(w):
+def _pwave_features(w, causal=False):
     """P-wave consistency: similarity of each beat's P-wave segment to the previous beat's and to the
-    local median P segment, averaged over +-15 beats. Regular sinus/atrial rhythm -> high; AF -> low."""
+    local median P segment, averaged over +-15 beats (causal: the previous 30 beats). Regular sinus/atrial
+    rhythm -> high; AF -> low."""
     p = _znorm_rows(w[:, PWAVE])
     consec = np.r_[0.0, (p[1:] * p[:-1]).mean(1)]
     consec[0] = consec[1] if len(consec) > 1 else 0.0
     local = np.empty(len(p))
     for i in range(len(p)):
-        med = np.median(p[max(0, i - RHYTHM_W):i + RHYTHM_W + 1], 0)
+        lo, hi = (max(0, i - 2 * RHYTHM_W), i + 1) if causal else (max(0, i - RHYTHM_W), i + RHYTHM_W + 1)
+        med = np.median(p[lo:hi], 0)
         med = (med - med.mean()) / (med.std() + 1e-8)
         local[i] = (p[i] * med).mean()
-    return np.stack([_smooth(consec), _smooth(local)], 1)
+    return np.stack([_smooth(consec, causal=causal), _smooth(local, causal=causal)], 1)
 
 
-def beats_from_peaks(xa, xb, peaks, labels, af):
+def _rr_and_rhythm(rr, ks, causal=False):
+    """RR features (7, log ratios) and RR-irregularity features (6) for the beats ks.
+    Offline: context on both sides. Causal (real-time): past beats plus the next R peak (one-beat delay)."""
+    rrf, rhy = [], []
+    for k in ks:
+        pre, post = max(rr[k - 1], 1e-3), max(rr[k], 1e-3)
+        prev = max(rr[k - 2], 1e-3) if k >= 2 else pre
+        l10 = rr[max(0, k - 10):k].mean()
+        l50 = rr[max(0, k - 50):k].mean() if causal else rr[max(0, k - 25):k + 25].mean()
+        rrf.append([pre / l10, post / l10, pre / post, pre / prev, l10 / l50, pre / l50, post / l50])
+        seg = rr[max(0, k - 2 * RHYTHM_W):k + 1] if causal else rr[max(0, k - RHYTHM_W):k + RHYTHM_W]
+        m = seg.mean()
+        jumps = np.diff(seg)
+        rhy.append([seg.std() / m, np.sqrt((jumps ** 2).mean()) / m, (np.abs(jumps) / m > 0.1).mean(),
+                    np.median(np.abs(jumps)) / np.median(seg), _autocorr(seg, 1), _autocorr(seg, 2)])
+    return np.log(np.clip(np.asarray(rrf), 1e-3, None)), np.asarray(rhy)
+
+
+REFRESH, HISTORY = 50, 300       # real-time templates: re-estimated every 50 beats from the previous 300 beats
+
+
+def _template_features_causal(w, ontime):
+    """Real-time version of _template_features: each block of 50 beats is compared with the beat patterns
+    found in the previous 300 beats. The first block uses its own 50 beats as a warm-up (about 40 s of look-ahead,
+    once, at the start of a recording). Returns also the correlation with a past-only single median beat."""
+    n = len(w)
+    diff = np.empty_like(w)
+    feats = np.empty((n, 4), np.float32)
+    nearest = np.zeros(n, np.int64)
+    consist = np.empty(n, np.float32)
+    n_max = 1
+    for c in range(0, n, REFRESH):
+        lo, hi = (0, min(n, REFRESH)) if c == 0 else (max(0, c - HISTORY), c)
+        templates = find_templates(w[lo:hi], ontime[lo:hi])
+        n_max = max(n_max, len(templates))
+        blk = slice(c, min(n, c + REFRESH))
+        wb = w[blk]
+        a = _corr_matrix(wb, templates).argmax(1)
+        t = templates[a]
+        d = wb - t
+        diff[blk] = d
+        nearest[blk] = a
+        feats[blk] = np.stack([(_znorm_rows(wb) * _znorm_rows(t)).mean(1),
+                               (_znorm_rows(wb[:, QRS]) * _znorm_rows(t[:, QRS])).mean(1),
+                               np.sqrt((d ** 2).mean(1)), np.sqrt((d[:, QRS] ** 2).mean(1))], 1)
+        consist[blk] = _corr_rows(wb, np.median(w[lo:hi], 0))
+    return diff, feats, nearest, n_max, consist
+
+
+def beats_from_peaks(xa, xb, peaks, labels, af, realtime=False):
     """peaks: all beat positions of the record (defines the rhythm);
-    labels: AAMI label per peak, or -1 for beats that are not classified (Q, unmatched)."""
+    labels: AAMI label per peak, or -1 for beats that are not classified (Q, unmatched).
+    realtime=True: every feature uses past beats only, plus the next R peak (one-beat delay)."""
     rr = np.diff(peaks) / FS
     ks = [k for k in range(1, len(peaks) - 1)
           if peaks[k] - BEFORE >= 0 and peaks[k] + AFTER <= min(len(xa), len(xb))]
@@ -254,23 +316,15 @@ def beats_from_peaks(xa, xb, peaks, labels, af):
     wa, wb = _windows(xa, pk), _windows(xb, pk)
     pre_rr = np.array([max(rr[k - 1], 1e-3) / rr[max(0, k - 10):k].mean() for k in ks])
     ontime = np.abs(np.log(pre_rr)) < ONTIME
-    da, ta, tmpl, n_tmpl = _template_features(wa, ontime)
-    db, tb, _, _ = _template_features(wb, ontime)
-
-    rrf, rhy = [], []
-    for k in ks:
-        pre, post = max(rr[k - 1], 1e-3), max(rr[k], 1e-3)
-        prev = max(rr[k - 2], 1e-3) if k >= 2 else pre
-        l10 = rr[max(0, k - 10):k].mean()
-        l50 = rr[max(0, k - 25):k + 25].mean()
-        rrf.append([pre / l10, post / l10, pre / post, pre / prev, l10 / l50, pre / l50, post / l50])
-        seg = rr[max(0, k - RHYTHM_W):k + RHYTHM_W]
-        m = seg.mean()
-        jumps = np.diff(seg)
-        rhy.append([seg.std() / m, np.sqrt((jumps ** 2).mean()) / m, (np.abs(jumps) / m > 0.1).mean(),
-                    np.median(np.abs(jumps)) / np.median(seg), _autocorr(seg, 1), _autocorr(seg, 2)])
-    rrf = np.log(np.clip(np.asarray(rrf), 1e-3, None))
-    rhythm = np.hstack([np.asarray(rhy), _pwave_features(wa)])
+    if realtime:
+        da, ta, tmpl, n_tmpl, consist = _template_features_causal(wa, ontime)
+        db, tb, _, _, _ = _template_features_causal(wb, ontime)
+    else:
+        da, ta, tmpl, n_tmpl = _template_features(wa, ontime)
+        db, tb, _, _ = _template_features(wb, ontime)
+        consist = _corr_rows(wa, np.median(wa, 0))
+    rrf, rhy = _rr_and_rhythm(rr, ks, realtime)
+    rhythm = np.hstack([rhy, _pwave_features(wa, realtime)])
 
     y = np.asarray([labels[k] for k in ks])
     keep = y >= 0
@@ -280,14 +334,37 @@ def beats_from_peaks(xa, xb, peaks, labels, af):
             "r": rhythm[keep].astype(np.float32), "y": y[keep].astype(np.int64),
             "af": np.asarray([af[k] for k in ks])[keep],
             "tmpl": tmpl[keep].astype(np.int8), "n_tmpl": np.full(int(keep.sum()), n_tmpl, np.int8),
-            "consist": _corr_rows(wa, np.median(wa, 0))[keep].astype(np.float32)}
+            "consist": consist[keep].astype(np.float32)}
 
 
-def load_record(db_dir, rec, peaks="annotated", db="mitdb"):
+def rhythm_only(db_dir, rec, db):
+    """Rhythm features and AF flags only (no beat classes), from the database's own QRS annotations ('qrs').
+    Used for the MIT-BIH Atrial Fibrillation Database, which has rhythm labels but no beat labels."""
+    path = str(Path(db_dir) / str(rec))
+    sig = wfdb.rdrecord(path, channels=[0])
+    raw = np.nan_to_num(sig.p_signal[:, 0])
+    ratio = Fraction(FS, int(round(sig.fs))).limit_denominator(1000)
+    xa = _bandpass(resample_poly(raw, ratio.numerator, ratio.denominator))
+    qrs = wfdb.rdann(path, "qrs")
+    peaks = np.round(np.asarray(qrs.sample, np.float64) * FS / sig.fs).astype(int)
+    rann = wfdb.rdann(path, "atr")
+    starts = np.round(np.asarray(rann.sample, np.float64) * FS / sig.fs).astype(int)
+    notes = [n.strip("\x00").strip() for n in rann.aux_note]
+    rr = np.diff(peaks) / FS
+    ks = [k for k in range(1, len(peaks) - 1) if peaks[k] - BEFORE >= 0 and peaks[k] + AFTER <= len(xa)]
+    pk = peaks[ks]
+    idx = np.searchsorted(starts, pk, side="right") - 1
+    af = np.array([i >= 0 and notes[i] in ("(AFIB", "(AFL") for i in idx])
+    _, rhy = _rr_and_rhythm(rr, ks)
+    r = np.hstack([rhy, _pwave_features(_windows(xa, pk))])
+    return r.astype(np.float32), af
+
+
+def load_record(db_dir, rec, peaks="annotated", db="mitdb", realtime=False):
     xa, xb, ref, syms, ref_af = read_record(db_dir, rec, db)
     ref_labels = np.array([AAMI.get(s, -1) for s in syms])
     if peaks == "annotated":
-        return beats_from_peaks(xa, xb, ref, ref_labels, ref_af), None
+        return beats_from_peaks(xa, xb, ref, ref_labels, ref_af, realtime), None
     det = detect_peaks(xa)
     owner = match_peaks(det, ref)
     labels = np.where(owner >= 0, ref_labels[np.maximum(owner, 0)], -1)
@@ -307,15 +384,15 @@ def _stack(parts, recs, prefix):
     return out
 
 
-def build_mitdb(peaks="annotated"):
+def build_mitdb(peaks="annotated", realtime=False):
     out, stats = {}, []
     for name, recs in [("train", [r for r in DS1 if r not in VAL]), ("val", VAL), ("test", DS2)]:
-        res = [load_record(MITDB_DIR, r, peaks, "mitdb") for r in recs]
+        res = [load_record(MITDB_DIR, r, peaks, "mitdb", realtime) for r in recs]
         part = _stack([r[0] for r in res], recs, name)
         part[f"{name}_rec"] = np.asarray(recs)[part[f"{name}_rec"]]     # real record numbers
         out.update(part)
         stats += [r[1] for r in res if r[1]]
-    np.savez_compressed(beats_path("mitdb", peaks), **out)
+    np.savez_compressed(beats_path("mitdb", peaks, realtime), **out)
     return out, stats
 
 
@@ -323,17 +400,17 @@ def records(db_dir):
     return [r.strip() for r in (Path(db_dir) / "RECORDS").read_text().split() if r.strip()]
 
 
-def build_external(db, peaks="annotated"):
-    db_dir = {"svdb": SVDB_DIR, "incart": INCART_DIR}[db]
-    recs = records(db_dir)
-    res = [load_record(db_dir, r, peaks, db) for r in recs]
+def build_external(db, peaks="annotated", realtime=False):
+    db_dir = {"svdb": SVDB_DIR, "incart": INCART_DIR, "nstdb": NSTDB_DIR}[db]
+    recs = records(db_dir) if db != "nstdb" else NSTDB_RECORDS
+    res = [load_record(db_dir, r, peaks, db, realtime) for r in recs]
     out = _stack([r[0] for r in res], recs, "ext")
-    np.savez_compressed(beats_path(db, peaks), **out)
+    np.savez_compressed(beats_path(db, peaks, realtime), **out)
     return out, [r[1] for r in res if r[1]]
 
 
-def beats_path(db, peaks="annotated"):
-    return DATA_DIR / f"{db}_{peaks}_{FEATURE_VERSION}.npz"
+def beats_path(db, peaks="annotated", realtime=False):
+    return DATA_DIR / f"{db}_{peaks}_{FEATURE_VERSION}{'_realtime' if realtime else ''}.npz"
 
 
 def _load(path, builder):
@@ -347,12 +424,12 @@ def _load(path, builder):
     return d
 
 
-def load_splits(peaks="annotated"):
-    return _load(beats_path("mitdb", peaks), lambda: build_mitdb(peaks))
+def load_splits(peaks="annotated", realtime=False):
+    return _load(beats_path("mitdb", peaks, realtime), lambda: build_mitdb(peaks, realtime))
 
 
-def load_external(db="svdb", peaks="annotated"):
-    return _load(beats_path(db, peaks), lambda: build_external(db, peaks))
+def load_external(db="svdb", peaks="annotated", realtime=False):
+    return _load(beats_path(db, peaks, realtime), lambda: build_external(db, peaks, realtime))
 
 
 if __name__ == "__main__":

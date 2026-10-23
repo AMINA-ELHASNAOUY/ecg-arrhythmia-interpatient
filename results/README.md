@@ -25,6 +25,9 @@ Model weights (`*.pt`) are not committed; re-create them with `train.py`.
 | `cnn{,_2lead}.json`, `_history.json`, `_training.png`, `_confusion.png` | train.py | CNN training curves and the seed-averaged model on DS2 |
 | `feature_norm{,_2lead}.npz` | train.py | Feature mean / std from the DS1 training patients (used at test time) |
 | `logistic_regression.*`, `gradient_boosting.*` | baseline.py | Feature-only baselines trained on all DS1 patients (train + validation) |
+| `extensions.md`, `extensions.json` | extensions.py | Noise stress test, rhythm model with more AF patients, real-time version |
+| `noise_stress.png` | extensions.py | Beat accuracy and unstable beats on record 118 at six noise levels |
+| `cnn_realtime*` | train.py --realtime | Real-time CNN (5 seeds): per-seed scores, training curve |
 
 Note: `logistic_regression.json` (baseline.py, trained on all 22 DS1 patients) and `ds2_lr.json` (evaluate.py, trained on the
 18 training patients so the 4 validation patients stay unseen for choosing the ensemble weight) differ slightly for that reason.

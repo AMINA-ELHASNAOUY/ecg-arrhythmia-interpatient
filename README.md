@@ -260,6 +260,58 @@ Frequent early beats on their own are not a reason to distrust the result: those
 82% of DS2 recordings (91% of those without a warning); S burden is much less reliable
 (32%), because false S alarms inflate it.
 
+## Extensions
+Three follow-up studies (`extensions.py`, full tables in [`results/extensions.md`](results/extensions.md)). None of them
+changes the main pipeline.
+
+**1. Noise stress test: does the warning notice noise?** Record 118, a DS1 hold-out patient the models never trained on (it is used only for early stopping),
+with electrode-motion noise added at six levels (MIT-BIH Noise Stress Test Database; noise in alternating 2-minute blocks):
+
+| Noise level (SNR) | Beat accuracy | Unstable beats | Warning |
+|---|---|---|---|
+| clean | 99.6% | 0.8% | no |
+| 24 dB | 99.2% | 3.7% | no |
+| 18 dB | 87.5% | 19.7% | ⚠ yes |
+| 12 dB | 73.5% | 35.6% | ⚠ yes |
+| 6 dB | 62.0% | 43.5% | ⚠ yes |
+| 0 dB | 57.9% | 44.3% | ⚠ yes |
+| -6 dB | 57.1% | 44.6% | ⚠ yes |
+
+The warning, with the threshold chosen on DS1 before this test, switches on at 18 dB, the first level where accuracy clearly drops
+(87.5%), and stays on for every noisier level.
+
+![Noise stress test](results/noise_stress.png)
+
+**2. A rhythm model with more AF patients.** Adding the 23 recordings of the MIT-BIH Atrial Fibrillation Database
+(130,026 AF beats used) to the 2 AF patients of DS1 changes the AF detector on DS2 from sensitivity
+82.6% / +P 92.8% to 94.9% / 79.4%: it finds more AF but raises more false AF alarms.
+
+| Test set | Main pipeline, macro-F1 | Same, AF detector with the AF database | Joint model with the AF probability |
+|---|---|---|---|
+| DS2 | 0.658 | 0.658 | 0.588 |
+| SVDB | 0.528 | 0.521 | 0.506 |
+| INCART | 0.490 | 0.495 | 0.591 |
+
+More AF patients do not change the main pipeline much, and the joint model again wins only on INCART: the lack of AF
+patients was not the main reason the joint model fell behind the rule on DS2 and SVDB.
+
+**3. Real-time version.** Every feature uses past beats only, plus the next R peak (a one-beat delay); beat patterns are
+re-estimated every 50 beats from the previous 300, and the fusion gate uses the share of V beats seen so far. A test that cuts
+a recording right after a beat confirms that the beat's features do not change. Trained and evaluated the same way as the
+main pipeline, with 5 CNN seeds instead of 10:
+
+| Test set | Offline: accuracy / macro-F1 | Real-time: accuracy / macro-F1 | S sensitivity |
+|---|---|---|---|
+| DS2 | 92.3% / 0.658 | 93.6% / 0.660 | 80% → 63% |
+| SVDB | 79.0% / 0.528 | 88.6% / 0.578 | 61% → 53% |
+| INCART | 78.6% / 0.490 | 87.9% / 0.557 | 96% → 93% |
+
+The real-time version is not worse, and is better on the two external databases. Two things differ at once, so the gain
+cannot be credited to one of them: its patterns adapt to slow changes during a recording, and the ensemble weight chosen on
+the DS1 hold-out gives the CNN more weight (0.50 vs 0.25 offline). It finds fewer S beats on DS2
+(63% vs 80%), and its AF detector is weaker without future beats
+(sensitivity 70.3% vs 82.6%).
+
 ## What I learned
 1. **Normalisation decides S detection.** In the first version, RR intervals were divided by each patient's
    median RR, and both models (random forest and CNN) found only 6–8% of S beats. The cause is record 232: it contains
@@ -290,8 +342,8 @@ Frequent early beats on their own are not a reason to distrust the result: those
 - Only 2 training patients have atrial fibrillation, which limits any learned rhythm model.
 - The S class in DS2 is dominated by one patient (232), so DS2 S metrics depend heavily on that record.
 - INCART's 75 recordings come from 32 patients, so its recordings are not independent.
-- Features use the whole recording (patient patterns, RR context after the beat), so this is an offline (Holter-style)
-  analysis, not a real-time detector.
+- The main pipeline uses the whole recording (patient patterns, RR context after the beat), like an offline Holter
+  analysis; the real-time version is an extension, and the warning itself is computed per recording.
 
 ## What was built, step by step
 - [x] Ensemble: logistic regression for S detection + CNN for N/V precision
@@ -307,9 +359,9 @@ Frequent early beats on their own are not a reason to distrust the result: those
 - [x] Joint rhythm-and-beat model instead of a post-hoc AF rule (tested; the rule transfers better on 2 of 3 test sets)
 - [x] More seeds and seed ensembling to reduce CNN variance
 
-**Beyond the scope of this project:** a learned rhythm model would need more AF patients than MIT-BIH offers, the
-unstable-beats warning could be checked against recordings with known added noise, and a real-time version would have
-to use past beats only.
+- [x] Rhythm model trained with more AF patients (MIT-BIH Atrial Fibrillation Database), joint model retried
+- [x] Unstable-beats warning validated against recordings with known added noise (MIT-BIH Noise Stress Test Database)
+- [x] Real-time version that only uses past beats
 
 ## Reproduce
 ```bash
@@ -320,6 +372,8 @@ bash scripts/download_svdb.command       # MIT-BIH Supraventricular Arrhythmia D
 bash scripts/download_incart.command     # St Petersburg INCART (~800 MB, optional)
 bash scripts/run_all.command             # features, baselines, detection, CNNs, AF detector, evaluation, analysis, plots
 bash scripts/update_results.command      # re-run evaluation + analysis only, with the trained CNNs (1-2 minutes)
+bash scripts/download_extra.command      # extensions: Noise Stress Test (~5 MB) + Atrial Fibrillation Database (~650 MB)
+bash scripts/run_extensions.command      # real-time CNN + the three extension studies
 ```
 Downloads are resumable. If INCART is not downloaded, `evaluate.py` skips it. Runs on Apple Silicon (MPS), CUDA or CPU.
 The `.command` scripts are plain bash scripts and run on macOS and Linux.
@@ -337,6 +391,7 @@ detection.py         QRS detector evaluation + fully automatic pipeline
 train.py             CNN training (10 seeds; --leads 1 or 2)
 evaluate.py          ensembles, AF rule, fusion gate, joint model, seed ensembling, evaluation on DS2 / SVDB / INCART
 analysis.py          recording-level analysis: beat patterns, false fusion alarms, reliability warning, ectopic burden
+extensions.py        noise stress test, rhythm model with more AF patients, real-time version
 scripts/             data downloads, full pipeline, evaluation-only update, comparison plot
 results/             metrics, plots, final_results.md and reliability.md (see results/README.md for an index)
 docs/                first-version results (one template per patient), kept for comparison
