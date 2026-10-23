@@ -1,6 +1,7 @@
 #!/bin/bash
 # Resumable download of the MIT-BIH Supraventricular Arrhythmia Database (external test set, ~40 MB).
 cd "$(dirname "$0")/.."
+fsize() { if [ -f "$1" ]; then wc -c < "$1" | tr -d ' '; else echo 0; fi; }   # portable file size (macOS + Linux)
 mkdir -p data/svdb
 # AWS Open Data mirror of PhysioNet (the main site rate-limits bulk downloads)
 BASE=https://physionet-open.s3.amazonaws.com/svdb/1.0.0
@@ -11,7 +12,7 @@ for round in 1 2 3 4 5; do
     for ext in hea atr dat; do
       f=data/svdb/$r.$ext
       if [ -f $f ] && head -c 6 $f | grep -q "<html"; then rm -f $f; fi
-      if [ "$ext" = dat ] && [ -f $f ] && [ $(stat -f %z $f) -ne 691200 ]; then rm -f $f; fi
+      if [ "$ext" = dat ] && [ -f $f ] && [ $(fsize $f) -ne 691200 ]; then rm -f $f; fi
       [ -s $f ] && [ ! -f $f.part ] && continue
       echo "$ext $r"
     done

@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from src.data import DS1, DS2, build_mitdb, load_splits
+from src.data import DS1, DS2, N_LEAD_A_FEATURES, build_mitdb, load_splits
 from src.metrics import report, save_report
 
 RESULTS = Path(__file__).resolve().parent / "results"
@@ -36,8 +36,9 @@ def main():
 
     d = load_splits("detected")
     clf = make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000, class_weight="balanced"))
-    clf.fit(np.concatenate([d["train_f"], d["val_f"]]), np.concatenate([d["train_y"], d["val_y"]]))
-    rep = report(d["test_y"], clf.predict(d["test_f"]))
+    A = N_LEAD_A_FEATURES
+    clf.fit(np.concatenate([d["train_f"][:, :A], d["val_f"][:, :A]]), np.concatenate([d["train_y"], d["val_y"]]))
+    rep = report(d["test_y"], clf.predict(d["test_f"][:, :A]))
     rep["note"] = "beats located by XQRS; missed beats are not classified (see detector.json)"
     save_report(rep, RESULTS, "logistic_regression_detected")
     print(f"Logistic regression on detected beats  DS2 accuracy {rep['accuracy']:.3f}  macro-F1 {rep['macro_f1']:.3f}")

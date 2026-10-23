@@ -1,61 +1,61 @@
 {
-  "accuracy": 0.9366,
-  "macro_f1": 0.5337,
+  "accuracy": 0.9398,
+  "macro_f1": 0.5393,
   "per_class": {
     "N": {
       "support": 44218,
-      "sensitivity": 0.9745,
-      "ppv": 0.9618,
-      "f1": 0.9681
+      "sensitivity": 0.9791,
+      "ppv": 0.9605,
+      "f1": 0.9697
     },
     "S": {
       "support": 1836,
-      "sensitivity": 0.1781,
-      "ppv": 0.2397,
-      "f1": 0.2044
+      "sensitivity": 0.213,
+      "ppv": 0.2864,
+      "f1": 0.2443
     },
     "V": {
       "support": 3219,
-      "sensitivity": 0.9599,
-      "ppv": 0.9078,
-      "f1": 0.9331
+      "sensitivity": 0.9264,
+      "ppv": 0.9307,
+      "f1": 0.9285
     },
     "F": {
       "support": 388,
-      "sensitivity": 0.018,
-      "ppv": 0.0761,
-      "f1": 0.0292
+      "sensitivity": 0.0077,
+      "ppv": 0.15,
+      "f1": 0.0147
     }
   },
   "confusion_matrix": [
     [
-      43090,
-      945,
-      110,
-      73
+      43293,
+      816,
+      93,
+      16
     ],
     [
-      1431,
-      327,
-      73,
-      5
+      1429,
+      391,
+      16,
+      0
     ],
     [
-      31,
-      91,
-      3090,
-      7
+      79,
+      157,
+      2982,
+      1
     ],
     [
-      249,
+      271,
       1,
-      131,
-      7
+      113,
+      3
     ]
   ],
   "seed": 0,
-  "best_val_f1_NSV": 0.6201666666666666,
-  "epochs_run": 29,
-  "train_seconds_all_seeds": 159.4,
+  "best_val_f1_NSV": 0.6309333333333332,
+  "epochs_run": 23,
+  "train_seconds_all_seeds": 169.3,
   "device": "mps"
 }

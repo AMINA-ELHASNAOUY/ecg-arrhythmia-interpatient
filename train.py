@@ -2,7 +2,8 @@
 
 Runs several seeds and reports mean +- std, so the numbers are not one lucky run.
 
-    python train.py               # 3 seeds
+    python train.py               # main pipeline: lead A, 3 seeds
+    python train.py --leads 2     # multi-lead experiment
     python train.py --seeds 1 --epochs 3   # quick smoke test
 """
 import argparse
@@ -18,7 +19,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.data import CLASSES, load_splits
+from src.data import CLASSES, N_LEAD_A_FEATURES, load_splits
 from src.metrics import macro_f1, report, save_report
 from src.model import BeatNet
 
@@ -66,7 +67,7 @@ def train_one(d, args, seed, dev, mu, sd):
     train_dl = loader(d, "train", mu, sd, args.bs, True)
     val_dl = loader(d, "val", mu, sd, 1024, False)
 
-    model = BeatNet().to(dev)
+    model = BeatNet(in_ch=d["train_x"].shape[1], n_feat=d["train_f"].shape[1]).to(dev)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-3)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=args.epochs)
     loss_fn = nn.CrossEntropyLoss(weight=w)
@@ -105,10 +106,18 @@ def main():
     ap.add_argument("--bs", type=int, default=256)
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--seeds", type=int, default=3)
+    ap.add_argument("--leads", type=int, default=1, choices=[1, 2],
+                    help="1 = lead A only (main pipeline), 2 = both leads (multi-lead experiment)")
     args = ap.parse_args()
 
     dev = device()
     d = load_splits()
+    if args.leads == 1:                      # keep lead A channels and the single-lead feature set
+        for s in ["train", "val", "test"]:
+            d[f"{s}_x"] = d[f"{s}_x"][:, :2]
+            d[f"{s}_f"] = d[f"{s}_f"][:, :N_LEAD_A_FEATURES]
+    tag = "" if args.leads == 1 else "_2lead"
+    print(f"CNN with {args.leads} lead(s): input channels {d['train_x'].shape[1]}, features {d['train_f'].shape[1]}")
     for s in ["train", "val", "test"]:
         print(f"{s:5s}", dict(zip(CLASSES, np.bincount(d[f'{s}_y'], minlength=4).tolist())))
     mu, sd = d["train_f"].mean(0), d["train_f"].std(0) + 1e-6
@@ -127,16 +136,16 @@ def main():
 
     # every seed is kept for the seed-averaged CNN used by evaluate.py
     for i, (_, m, _) in enumerate(runs):
-        torch.save(m.state_dict(), RESULTS / f"beatnet_seed{i}.pt")
-    np.savez(RESULTS / "feature_norm.npz", mu=mu, sd=sd)
+        torch.save(m.state_dict(), RESULTS / f"beatnet{tag}_seed{i}.pt")
+    np.savez(RESULTS / f"feature_norm{tag}.npz", mu=mu, sd=sd)
 
     # The model kept for plots/weights is chosen by VALIDATION score, never by test score.
     rep, model, history = max(runs, key=lambda r: r[0]["best_val_f1_NSV"])
-    torch.save(model.state_dict(), RESULTS / "beatnet.pt")
+    torch.save(model.state_dict(), RESULTS / f"beatnet{tag}.pt")
     rep["train_seconds_all_seeds"] = round(time.time() - t0, 1)
     rep["device"] = str(dev)
-    save_report(rep, RESULTS, "cnn")
-    (RESULTS / "cnn_history.json").write_text(json.dumps(history, indent=2))
+    save_report(rep, RESULTS, f"cnn{tag}")
+    (RESULTS / f"cnn{tag}_history.json").write_text(json.dumps(history, indent=2))
 
     summary = {"accuracy": [r[0]["accuracy"] for r in runs], "macro_f1": [r[0]["macro_f1"] for r in runs]}
     for c in CLASSES:
@@ -144,7 +153,7 @@ def main():
             summary[f"{c}_{m}"] = [r[0]["per_class"][c][m] for r in runs]
     summary = {k: {"mean": round(float(np.mean(v)), 4), "std": round(float(np.std(v)), 4), "runs": v}
                for k, v in summary.items()}
-    (RESULTS / "cnn_seeds.json").write_text(json.dumps(summary, indent=2))
+    (RESULTS / f"cnn{tag}_seeds.json").write_text(json.dumps(summary, indent=2))
 
     fig, ax1 = plt.subplots(figsize=(5, 3))
     ep = [h["epoch"] for h in history]
@@ -156,7 +165,7 @@ def main():
     ax2.set_ylabel("F1")
     fig.legend(loc="upper center", ncol=2, fontsize=8)
     fig.tight_layout()
-    fig.savefig(RESULTS / "cnn_training.png", dpi=150)
+    fig.savefig(RESULTS / f"cnn{tag}_training.png", dpi=150)
 
     print(f"\nDS2 test (unseen patients), {args.seeds} seeds, mean +- std")
     for k, v in summary.items():

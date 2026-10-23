@@ -1,5 +1,5 @@
 """Feature baselines on the same split: logistic regression and gradient boosting
-on the 11 patient-relative features (7 RR + 4 template). No waveform input.
+on the 11 single-lead patient-relative features (7 RR + 4 template). No waveform input.
 """
 from pathlib import Path
 
@@ -9,7 +9,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-from src.data import load_splits
+from src.data import N_LEAD_A_FEATURES, load_splits
 from src.metrics import report, save_report
 
 RESULTS = Path(__file__).resolve().parent / "results"
@@ -17,7 +17,8 @@ RESULTS = Path(__file__).resolve().parent / "results"
 
 def main():
     d = load_splits()
-    X = np.concatenate([d["train_f"], d["val_f"]])
+    A = N_LEAD_A_FEATURES
+    X = np.concatenate([d["train_f"][:, :A], d["val_f"][:, :A]])
     y = np.concatenate([d["train_y"], d["val_y"]])
     models = {
         "logistic_regression": make_pipeline(
@@ -27,7 +28,7 @@ def main():
     }
     for name, clf in models.items():
         clf.fit(X, y)
-        rep = report(d["test_y"], clf.predict(d["test_f"]))
+        rep = report(d["test_y"], clf.predict(d["test_f"][:, :A]))
         save_report(rep, RESULTS, name)
         print(f"{name}  DS2 accuracy {rep['accuracy']:.3f}  macro-F1 {rep['macro_f1']:.3f}")
         for c, v in rep["per_class"].items():

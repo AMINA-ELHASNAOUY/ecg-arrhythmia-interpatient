@@ -1,4 +1,4 @@
-"""1D CNN over (beat, beat - patient template), fused with RR + template features."""
+"""1D CNN over (beat, beat - patient template) for one or two leads, fused with RR + template features."""
 import torch
 from torch import nn
 

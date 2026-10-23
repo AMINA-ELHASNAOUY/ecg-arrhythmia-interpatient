@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "chosen": "gradient_boosting",
+    "threshold": 0.75,
+    "cross_validation": {
+      "logistic_regression": {
+        "threshold": 0.9,
+        "cv_f1": 0.7196
+      },
+      "gradient_boosting": {
+        "threshold": 0.75,
+        "cv_f1": 0.8212
+      }
+    }
+  },
+  "DS2": {
+    "af_beats": 8717,
+    "sensitivity": 0.8257,
+    "ppv": 0.9275,
+    "specificity": 0.9862
+  },
+  "note": "SVDB and INCART have no rhythm annotations; the detector is scored on MIT-BIH DS2 only."
+}
