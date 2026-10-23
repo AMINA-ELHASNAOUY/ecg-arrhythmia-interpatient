@@ -11,8 +11,8 @@ R = Path(__file__).resolve().parent.parent / "results"
 CLASSES = ["N", "S", "V"]
 MODELS = [("lr", "Logistic regression", "#1565C0"),
           ("cnn", "CNN", "#7FA7D9"),
-          ("ensemble", "Ensemble", "#0A2E5C"),
-          ("ensemble_af", "Ensemble + AF-aware rule", "#F4A100")]
+          ("ensemble_af", "Ensemble + AF rule", "#0A2E5C"),
+          ("ensemble_af_gate", "Ensemble + AF rule + fusion gate", "#F4A100")]
 SPLITS = [(s, t) for s, t in [("ds2", "MIT-BIH DS2 (22 unseen patients)"), ("svdb", "SVDB (78 patients)"),
                               ("incart", "INCART (75 recordings)")] if (R / f"{s}_lr.json").exists()]
 

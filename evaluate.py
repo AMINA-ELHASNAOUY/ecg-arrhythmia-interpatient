@@ -3,11 +3,13 @@
   * SVDB   - 78 patients, MIT-BIH Supraventricular Arrhythmia Database (external)
   * INCART - 75 recordings, St Petersburg INCART 12-lead database (external, if downloaded)
 
-Main pipeline (lead A only): logistic regression, CNN (3 seeds averaged), their ensemble, and the ensemble
-with the AF-aware rule. Multi-lead experiment: the same logistic regression / CNN / ensemble with both leads.
-Everything that is chosen (ensemble weight, AF detector, AF threshold) is chosen on DS1 patients only.
+Main pipeline (lead A only): logistic regression, CNN (3 seeds averaged), their ensemble, the ensemble
+with the AF-aware rule, and finally the recording-level fusion gate (src/reliability.py). Multi-lead experiment: the same logistic regression / CNN / ensemble with both leads.
+Everything that is chosen (ensemble weight, AF detector, AF threshold) is chosen on DS1 patients only;
+the fusion gate threshold (1%) is fixed in advance.
 The logistic regressions are trained on the 18 DS1 training patients so the 4 validation patients stay
-unseen for choosing the ensemble weight. Run after train.py.
+unseen for choosing the ensemble weight. Run after train.py; per-beat predictions are saved to
+data/predictions.npz for analysis.py.
 """
 import json
 from pathlib import Path
@@ -24,14 +26,17 @@ from sklearn.preprocessing import StandardScaler
 from src.af import AFDetector, af_metrics, apply_af_rule
 from src.data import CLASSES, INCART_DIR, N_LEAD_A_FEATURES, load_external, load_splits
 from src.metrics import macro_f1, report, save_report, table
+from src.reliability import CONSISTENCY_COL, TAU, fusion_gate
 from src.model import BeatNet
 
 RESULTS = Path(__file__).resolve().parent / "results"
+DATA = Path(__file__).resolve().parent / "data"
 MODEL_NAMES = {
     "lr": "Logistic regression",
     "cnn": "CNN (3-seed average)",
     "ensemble": "Ensemble (LR + CNN)",
-    "ensemble_af": "**Ensemble + AF-aware rule**",
+    "ensemble_af": "Ensemble + AF-aware rule",
+    "ensemble_af_gate": "**Ensemble + AF rule + fusion gate**",
     "lr_2lead": "Two leads: logistic regression",
     "cnn_2lead": "Two leads: CNN",
     "ensemble_2lead": "Two leads: ensemble",
@@ -64,7 +69,7 @@ def per_patient(y, rec, pred):
         row = {"record": str(r), "beats": int(m.sum())}
         for c_i, c in enumerate(CLASSES):
             row[f"n_{c}"] = int((y[m] == c_i).sum())
-        for c_i, c in [(1, "S"), (2, "V")]:
+        for c_i, c in [(1, "S"), (2, "V"), (3, "F")]:
             row[f"{c}_tp"] = int(((y[m] == c_i) & (pred[m] == c_i)).sum())
             row[f"{c}_fn"] = int(((y[m] == c_i) & (pred[m] != c_i)).sum())
             row[f"{c}_fp"] = int(((y[m] != c_i) & (pred[m] == c_i)).sum())
@@ -135,17 +140,23 @@ def main():
     w = weights[""]
     print(f"ensemble weights on logistic regression (chosen on validation): {weights}")
 
-    reports, preds = {}, {}
+    reports, preds, saved = {}, {}, {}
     for name in [n for n in sets if n != "val"]:
         data, k = sets[name], split_key[name]
         y = data[f"{k}_y"]
         p = P[name]
-        ens = (w * p["lr"] + (1 - w) * p["cnn"]).argmax(1)
+        ens_p = w * p["lr"] + (1 - w) * p["cnn"]
+        ens = ens_p.argmax(1)
+        ens_af = apply_af_rule(ens, p["af"])
+        rec = data[f"{k}_rec"]
         w2 = weights["_2lead"]
         preds[name] = {"lr": p["lr"].argmax(1), "cnn": p["cnn"].argmax(1), "ensemble": ens,
-                       "ensemble_af": apply_af_rule(ens, p["af"]),
+                       "ensemble_af": ens_af, "ensemble_af_gate": fusion_gate(ens_p, ens_af, rec),
                        "lr_2lead": p["lr_2lead"].argmax(1), "cnn_2lead": p["cnn_2lead"].argmax(1),
                        "ensemble_2lead": (w2 * p["lr_2lead"] + (1 - w2) * p["cnn_2lead"]).argmax(1)}
+        saved[name] = {"y": y, "rec": rec.astype(str), "prob": ens_p.astype(np.float32),
+                       "pred": preds[name]["ensemble_af_gate"], "af_pred": p["af"],
+                       "consistency": data[f"{k}_f"][:, CONSISTENCY_COL].astype(np.float32)}
         for model, pr in preds[name].items():
             rep = report(y, pr)
             reports[(name, model)] = rep
@@ -155,6 +166,8 @@ def main():
                "note": "SVDB and INCART have no rhythm annotations; the detector is scored on MIT-BIH DS2 only."}
     (RESULTS / "af_detector.json").write_text(json.dumps(af_eval, indent=2))
     (RESULTS / "ensemble.json").write_text(json.dumps({"weight_lr": weights, "val_grid": val_grid}, indent=2))
+    np.savez_compressed(DATA / "predictions.npz",
+                        **{f"{n}__{key}": v for n, d_ in saved.items() for key, v in d_.items()})
 
     # ---- markdown summary
     md = ["# Final evaluation", "",
@@ -162,7 +175,9 @@ def main():
           f"(two-lead ensemble: {weights['_2lead']}), weights chosen on DS1 validation patients.",
           f"AF detector: {af.name.replace('_', ' ')}, threshold {af.threshold}, chosen by leave-patient-out CV on DS1 "
           f"(CV F1 {af.cv[af.name]['cv_f1']}). On DS2: AF sensitivity {af_eval['DS2']['sensitivity']:.1%}, "
-          f"+P {af_eval['DS2']['ppv']:.1%}, specificity {af_eval['DS2']['specificity']:.1%}.", ""]
+          f"+P {af_eval['DS2']['ppv']:.1%}, specificity {af_eval['DS2']['specificity']:.1%}.",
+          f"Fusion gate: F predictions are dropped in recordings where fewer than {TAU:.0%} of beats are predicted V "
+          f"(threshold fixed in advance, see src/reliability.py).", ""]
     titles = {"DS2": "DS2 — 22 unseen MIT-BIH patients", "SVDB": "SVDB — 78 patients, second database (external)",
               "INCART": "INCART — 75 recordings, third database (external)"}
     for name in [n for n in sets if n != "val"]:
@@ -171,17 +186,21 @@ def main():
         n = np.bincount(sets[name][f"{k}_y"], minlength=4)
         md += ["Support: " + " · ".join(f"{c} {v:,}" for c, v in zip(CLASSES, n)), ""]
 
-    pp = per_patient(d["test_y"], d["test_rec"], preds["DS2"]["ensemble_af"])
-    (RESULTS / "per_patient_ds2.json").write_text(json.dumps(pp, indent=2))
-    md += ["## Per-patient errors on DS2 (ensemble + AF rule)", "",
-           "| Record | Beats | S beats | S found | S missed | false S | V beats | V found | V missed | false V | Accuracy |",
-           "|---|---|---|---|---|---|---|---|---|---|---|"]
-    for r in sorted(pp, key=lambda r: -(r["S_fn"] + r["S_fp"] + r["V_fn"] + r["V_fp"])):
-        md.append(f"| {r['record']} | {r['beats']} | {r['n_S']} | {r['S_tp']} | {r['S_fn']} | {r['S_fp']} | "
-                  f"{r['n_V']} | {r['V_tp']} | {r['V_fn']} | {r['V_fp']} | {r['accuracy']:.1%} |")
+    pp_main = per_patient(d["test_y"], d["test_rec"], preds["DS2"]["ensemble_af_gate"])
+    pp_nogate = {r["record"]: r for r in per_patient(d["test_y"], d["test_rec"], preds["DS2"]["ensemble_af"])}
+    (RESULTS / "per_patient_ds2.json").write_text(json.dumps(pp_main, indent=2))
+    md += ["## Per-patient errors on DS2 (ensemble + AF rule + fusion gate)", "",
+           "`false F (no gate)` = false fusion alarms before the fusion gate.", "",
+           "| Record | Beats | S beats | S found | false S | V beats | V found | false V | F beats | false F (no gate) | false F | Accuracy |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in sorted(pp_main, key=lambda r: r["accuracy"]):
+        md.append(f"| {r['record']} | {r['beats']} | {r['n_S']} | {r['S_tp']} | {r['S_fp']} | "
+                  f"{r['n_V']} | {r['V_tp']} | {r['V_fp']} | {r['n_F']} | {pp_nogate[r['record']]['F_fp']} | "
+                  f"{r['F_fp']} | {r['accuracy']:.1%} |")
     (RESULTS / "final_results.md").write_text("\n".join(md) + "\n")
 
     # ---- per-patient error plot (before vs after the AF rule)
+    pp = per_patient(d["test_y"], d["test_rec"], preds["DS2"]["ensemble_af"])
     before = {r["record"]: r for r in per_patient(d["test_y"], d["test_rec"], preds["DS2"]["ensemble"])}
     recs = [r["record"] for r in pp]
     x = np.arange(len(recs))

@@ -50,8 +50,11 @@ def save_report(rep, out_dir: Path, name: str):
     ax.set_yticks(range(len(CLASSES)), CLASSES)
     ax.set_xlabel("Predicted")
     ax.set_ylabel("True")
-    split = "SVDB, external database" if name.startswith("svdb") else "DS2, unseen patients"
-    ax.set_title(f"{name.replace('ds2_', '').replace('svdb_', '')} ({split})", fontsize=10)
+    prefix, _, model = name.partition("_")
+    split = {"svdb": "SVDB, external database", "incart": "INCART, external database"}.get(prefix, "DS2, unseen patients")
+    if prefix not in ("ds2", "svdb", "incart"):
+        model = name
+    ax.set_title(f"{model} ({split})", fontsize=10)
     fig.tight_layout()
     fig.savefig(out_dir / f"{name}_confusion.png", dpi=150)
     plt.close(fig)
