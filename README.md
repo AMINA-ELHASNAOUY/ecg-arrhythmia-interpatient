@@ -49,6 +49,18 @@ Because my research is about data reliability, the last part of the project turn
 only asking how accurate the model is, it asks whether the system can recognise the recordings where its own output
 should not be trusted, before anyone acts on it.
 
+## How the project evolved
+1. **An honest split first.** With unseen test patients, the first models found only 6–8% of S beats. The cause was
+   one record (232) whose "normal" rhythm was itself S beats → features relative to the *local* rhythm (above 90%).
+2. **Errors per patient.** Most false S alarms came from patients in atrial fibrillation → an AF-aware rule.
+3. **Does it hold up elsewhere?** Two external databases, automatic R-peak detection and a second lead.
+4. **Most remaining errors were false fusion alarms.** Traced to patients with two conduction patterns (bundle branch
+   block) → several beat patterns per patient, plus a fusion gate.
+5. **Can the system tell when it is wrong?** A label-free reliability warning with causes, then checked on recordings
+   with added noise.
+6. **Stress tests of my own choices.** 10 training seeds; a learned joint rhythm model (the rule transferred better),
+   retried with 23 extra AF patients; a real-time version using past beats only.
+
 ## Why inter-patient matters
 Many MIT-BIH papers shuffle all beats and split them randomly, so beats from the same patient appear in
 both training and test sets. Accuracy then looks close to 99% but mostly measures how well the model
@@ -344,24 +356,6 @@ the DS1 hold-out gives the CNN more weight (0.50 vs 0.25 offline). It finds fewe
 - INCART's 75 recordings come from 32 patients, so its recordings are not independent.
 - The main pipeline uses the whole recording (patient patterns, RR context after the beat), like an offline Holter
   analysis; the real-time version is an extension, and the warning itself is computed per recording.
-
-## What was built, step by step
-- [x] Ensemble: logistic regression for S detection + CNN for N/V precision
-- [x] Per-patient error analysis (which records fail, and why)
-- [x] External validation on a second database (MIT-BIH Supraventricular Arrhythmia Database)
-- [x] Automatic R-peak detection instead of annotated peaks
-- [x] AF-aware rule: detect the rhythm first, then correct S predictions
-- [x] Two-lead input and a third database with a different lead setup (St Petersburg INCART)
-- [x] Explain and reduce false F alarms (fusion gate)
-- [x] Label-free reliability flag per recording
-- [x] Several templates per patient (one per conduction pattern) instead of a single median beat
-- [x] Separate the reliability flag into causes (unstable beats vs frequent early beats vs several patterns)
-- [x] Joint rhythm-and-beat model instead of a post-hoc AF rule (tested; the rule transfers better on 2 of 3 test sets)
-- [x] More seeds and seed ensembling to reduce CNN variance
-
-- [x] Rhythm model trained with more AF patients (MIT-BIH Atrial Fibrillation Database), joint model retried
-- [x] Unstable-beats warning validated against recordings with known added noise (MIT-BIH Noise Stress Test Database)
-- [x] Real-time version that only uses past beats
 
 ## Reproduce
 ```bash
