@@ -7,21 +7,26 @@ Model weights (`*.pt`) are not committed; re-create them with `train.py`.
 |---|---|---|
 | `final_results.md` | evaluate.py | **Main results**: DS2, SVDB and INCART tables and the per-patient error table |
 | `{ds2,svdb,incart}_{lr,cnn,ensemble,ensemble_af,ensemble_af_gate}.json` / `_confusion.png` | evaluate.py | Single-lead models on each test set (`ensemble_af` = ensemble + AF-aware rule, `ensemble_af_gate` = + fusion gate, the main pipeline) |
+| `{ds2,svdb,incart}_{lr_af_gate,joint_gate}.json` / `_confusion.png` | evaluate.py | Post-hoc AF rule vs joint rhythm-and-beat model (both feature-only, with the fusion gate) |
 | `{ds2,svdb,incart}_{lr,cnn,ensemble}_2lead.json` / `_confusion.png` | evaluate.py | Two-lead experiment on each test set |
 | `af_detector.json` | evaluate.py | AF detector: model and threshold chosen by leave-patient-out CV on DS1, scored on DS2 |
 | `ensemble.json` | evaluate.py | Ensemble weights and the validation scores used to choose them |
 | `per_patient_ds2.json`, `per_patient_errors.png` | evaluate.py | S/V/F errors per DS2 patient (main pipeline); S errors before and after the AF-aware rule |
-| `reliability.md` | analysis.py | **Recording-level analysis**: fusion gate, which beats become false F, reliability flag, ectopic burden, DS2 recording summaries |
+| `reliability.md` | analysis.py | **Recording-level analysis**: beat patterns found, fusion gate, reliability warning and its causes, ectopic burden, DS2 recording summaries |
 | `reliability.json` | analysis.py | Same, plus per-recording rows for all three test sets |
-| `reliability.png` | analysis.py | Beat consistency vs recording accuracy on DS2, SVDB and INCART |
-| `false_fusion.png` | analysis.py | Normal beats called F (records 117, 212) next to real fusion beats (record 213) |
+| `reliability.png` | analysis.py | First-version consistency flag vs the unstable-beats warning, against recording accuracy |
+| `templates.png` | analysis.py | Beat patterns found without labels in records 212, 231 (conduction changes) and 233 (frequent V beats) |
+| `joint_model.json` | evaluate.py | Joint rhythm-and-beat model: candidates and their leave-patient-out CV scores on DS1 |
+| `seed_ensembles.json` | evaluate.py | Macro-F1 of ensembles of k = 1, 3, 5, 10 CNN seeds on every test set (mean, std, min, max) |
 | `model_comparison.png` | scripts/compare_plot.py | Per-class sensitivity / +P chart on every test set |
 | `detector.json` | detection.py | QRS detector sensitivity / +P, per record |
 | `logistic_regression_detected.*` | detection.py | Fully automatic pipeline (detected R peaks) on DS2 |
-| `cnn{,_2lead}_seeds.json` | train.py | **Per-seed** DS2 scores (mean ± std over 3 seeds) |
+| `cnn{,_2lead}_seeds.json` | train.py | **Per-seed** DS2 scores (mean ± std over 10 seeds) |
 | `cnn{,_2lead}.json`, `_history.json`, `_training.png`, `_confusion.png` | train.py | CNN training curves and the seed-averaged model on DS2 |
 | `feature_norm{,_2lead}.npz` | train.py | Feature mean / std from the DS1 training patients (used at test time) |
 | `logistic_regression.*`, `gradient_boosting.*` | baseline.py | Feature-only baselines trained on all DS1 patients (train + validation) |
 
 Note: `logistic_regression.json` (baseline.py, trained on all 22 DS1 patients) and `ds2_lr.json` (evaluate.py, trained on the
 18 training patients so the 4 validation patients stay unseen for choosing the ensemble weight) differ slightly for that reason.
+
+`docs/` keeps the first version's results (single template per patient) for comparison: `v1_final_results.md`, `v1_reliability.json`, `false_fusion_v1.png`.

@@ -6,28 +6,31 @@ Heartbeat classification (AAMI classes **N, S, V, F**) evaluated the way it woul
 model selection.
 
 The project then asks a second question that matters just as much in clinical use: **can the system tell, without any
-labels, for which recordings its own result should not be trusted?**
+labels, for which recordings its own result should not be trusted, and why?**
 
 **Highlights**
 - **Three test sets, no tuning on any of them:** 22 unseen MIT-BIH patients (DS2), the MIT-BIH Supraventricular Arrhythmia
   Database (78 recordings) and the St Petersburg INCART database (75 recordings from 32 patients, different hospital and leads).
-- **Patient-relative features** lift S-beat sensitivity from 6–8% to 92% with a plain logistic regression.
-- **Most errors were false fusion alarms, and they have a physiological explanation.** AAMI's "N" class merges different
-  conduction patterns. In record 212, whose usual beat is right bundle branch block, 917 of its
-  922 normally conducted beats were called fusion. A recording-level **fusion gate** (no ventricular
-  beats → no fusion is possible) cuts false F alarms on DS2 from 4,740 to 1,962 and raises
-  accuracy from 84.8% to 90.1% (macro-F1 0.608 → 0.631).
-- **A label-free reliability flag.** How consistent a patient's beats are with their own median beat predicts which
-  recordings the model will get wrong. With a threshold chosen on training patients only, recordings that are *not*
-  flagged reach 94.1% (SVDB) and 91.9% (INCART) beat accuracy, flagged ones
-  62.0% and 65.6%.
-- **An AF-aware rule** (a rhythm detector trained on MIT-BIH training patients only) removes 41% of false S alarms on DS2
-  (3,479 → 2,045).
-- **Fully automatic pipeline:** 99.2% QRS detection, with classification on detected beats at the level of expert-annotated beats.
-- **An honest result:** no single model wins everywhere. On DS2 the main pipeline (ensemble + AF rule + fusion gate) has the best
-  macro-F1 (0.631); on the two external databases the two-lead CNN is clearly better
-  (0.528 and 0.674 vs 0.510 and 0.461), but it finds far fewer
-  S beats (27% and 61% vs 64% and 96%).
+- **Patient-relative features**: every beat is compared with the patient's own rhythm and own usual beat. This lifts
+  S-beat sensitivity from 6–8% (first version) to 90% with a plain logistic regression.
+- **Several "usual beats" per patient.** Most errors of the first version were false fusion alarms: in record 212, whose
+  usual beat is right bundle branch block, 917 of its 922
+  normally conducted beats were called fusion. The pipeline now finds each patient's beat patterns without labels
+  (record 212 splits exactly into its RBBB and normal beats) and compares every beat with its own pattern. False fusion
+  alarms in record 212 drop from 927 to 21, and ventricular beats never form a pattern of their own.
+- **A fusion gate** (no ventricular beats → no fusion is possible) removes another 39% of the false F alarms on DS2
+  (2,239 → 1,360; first version: 4,740 before the gate).
+- **A label-free reliability warning with causes.** The share of on-time beats that match none of the patient's own
+  patterns predicts which recordings the model will get wrong: with a threshold chosen on training patients only, recordings
+  without a warning reach 96.5% / 96.9% / 93.6% beat accuracy
+  (DS2 / SVDB / INCART), recordings with a warning 88.7% / 71.2% / 73.7%.
+- **Rule vs learned rhythm model.** A joint rhythm-and-beat model was tested instead of the post-hoc AF rule:
+  it beats the post-hoc AF rule on INCART but not on DS2 or SVDB, so the rule stays in the main pipeline.
+- **Seed ensembling:** a single CNN run varies a lot (DS2 macro-F1 0.619 ± 0.036
+  over 10 seeds); averaging 10 seeds gives one stable model.
+- **Fully automatic pipeline:** 99.2% QRS detection, with classification on detected beats at the level of
+  expert-annotated beats.
+- **An honest result:** no single model wins everywhere. On DS2 the main pipeline has the best macro-F1 (0.658); on the two external databases the two-lead CNN is better (0.555 and 0.674 vs 0.528 and 0.490), but it finds far fewer S beats (39% and 78% vs 61% and 96%).
 
 ![Model comparison](results/model_comparison.png)
 
@@ -66,27 +69,33 @@ Paced records (102, 104, 107, 217) are excluded and Q beats are dropped, followi
 
 **Patient-relative features.** The key design choice: every beat is described *relative to its own patient*.
 - 7 RR-interval features as log ratios to the *local* rhythm (previous 10 beats, surrounding 50 beats, previous RR).
-- 4 template features: correlation and RMS distance between the beat and the patient's median beat,
-  for the whole beat and for the QRS complex only. The template is computed from the unlabeled signal.
+- 4 template features: correlation and RMS distance between the beat and the patient's **nearest beat pattern**,
+  for the whole beat and for the QRS complex only.
+
+**Beat patterns (templates).** A patient can have more than one normal conduction pattern (intermittent bundle branch
+block, intermittent pre-excitation). For each recording, on-time beats are clustered into up to 3 patterns, without labels.
+A pattern is kept only if it covers ≥ 10% of the beats, most of its beats arrive on time, ≥ 50% of its beats come in runs of
+≥ 3 consecutive beats (a conduction change lasts a while; ectopic beats are scattered), and it clearly differs from the
+other patterns. These rules come from the MIT-BIH training data: conduction changes keep 98–100% of their beats in such runs,
+ventricular beats at most 38%.
 
 **Models.**
 - **Logistic regression** on the 11 features.
-- **1D CNN** (4 conv blocks) whose input is the beat **and** the beat minus the patient template (2 channels),
-  fused with the 11 features. Class-weighted loss, augmentation (amplitude scaling, baseline wander, noise),
-  early stopping on the held-out DS1 patients, 3 seeds averaged.
-- **Ensemble:** weighted average of the two models' probabilities. The weight (0.9 logistic regression / 0.1 CNN)
-  is chosen on the DS1 hold-out patients, never on test data.
+- **1D CNN** (4 conv blocks) whose input is the beat **and** the beat minus its pattern (2 channels), fused with the 11
+  features. Class-weighted loss, augmentation (amplitude scaling, baseline wander, noise), early stopping on the held-out
+  DS1 patients, 10 seeds averaged.
+- **Ensemble:** weighted average of the two models' probabilities, weight chosen on the DS1 hold-out patients.
 - **AF-aware rule:** a gradient-boosting detector recognises atrial fibrillation / flutter from rhythm context alone
   (RR irregularity over ±15 beats and P-wave consistency). Inside detected AF, S predictions become N, because by
   definition there are no supraventricular ectopic beats during AF. Model and threshold (0.75) are chosen by
   leave-patient-out cross-validation on DS1. On DS2 the detector reaches AF sensitivity 82.6%, +P 92.8%,
   specificity 98.6%.
-- **Fusion gate** (`src/reliability.py`): a fusion beat is a normal and a ventricular beat firing together, so it cannot occur
-  in a recording without ventricular ectopy. If the model predicts V for fewer than 1% of a recording's beats, its F
+- **Fusion gate** (`src/reliability.py`): if the model predicts V for fewer than 1% of a recording's beats, its F
   predictions are replaced by the best of N / S / V. The 1% threshold is fixed in advance, not tuned.
-- **Reliability flag** (`analysis.py`): *beat consistency* = the median correlation between each beat and the patient's
-  median beat (lead A). It needs no labels and no model. A recording is flagged when consistency < 0.975, a threshold chosen
-  on DS1 patients only (out-of-fold predictions, Youden's J for "recording accuracy below 90%").
+- **Joint rhythm-and-beat model** (`src/joint.py`, experiment): one classifier sees the beat features *and* the rhythm
+  context, instead of the post-hoc AF rule. The model family (logistic regression, logistic regression with rhythm × RR interactions, gradient boosting) is chosen by
+  leave-patient-out cross-validation on DS1; gradient boosting won.
+- **Reliability warning** (`analysis.py`): see [When not to trust a result](#when-not-to-trust-a-result).
 - **Two-lead experiment:** the same models with a second lead (V1 on most MIT-BIH records, ECG2 on SVDB, V1 on INCART).
 
 **Three test sets.**
@@ -95,31 +104,58 @@ Paced records (102, 104, 107, 217) are excluded and Q beats are dropped, followi
 - **INCART:** St Petersburg INCART 12-lead database, 75 recordings from 32 patients at 257 Hz (175,718 beats).
 
 ## Results
-Se = sensitivity, +P = positive predictivity, in %. Macro-F1 is the mean F1 over N, S, V and F.
-The CNN rows use the average of 3 seeds' probabilities. Full tables (all models, including the two-lead
-logistic regression and ensemble) are in [`results/final_results.md`](results/final_results.md).
+Se = sensitivity, +P = positive predictivity, in %. Macro-F1 is the mean F1 over N, S, V and F; best value per column in bold.
+Full tables (all models) are in [`results/final_results.md`](results/final_results.md).
 
 ### DS2 — 22 unseen MIT-BIH patients
 | Model | Accuracy | Macro-F1 | N Se / +P | S Se / +P | V Se / +P | F Se / +P |
 |---|---|---|---|---|---|---|
-| Logistic regression (features) | 81.2% | 0.573 | 80.9 / **99.1** | **92.0** / 31.0 | 82.6 / 92.0 | **48.4** / 3.6 |
-| CNN (waveform + features) | 94.5% | 0.612 | 97.7 / 96.7 | 35.3 / 39.4 | 94.2 / 92.6 | 10.3 / **48.8** |
-| Ensemble + AF-aware rule | 84.8% | 0.608 | 85.2 / 98.6 | 85.0 / 43.3 | 84.1 / 92.2 | 45.1 / 3.6 |
-| **Ensemble + AF rule + fusion gate** | 90.1% | **0.631** | 91.1 / 98.7 | 85.4 / 42.5 | 84.1 / 90.4 | 45.1 / 8.2 |
-| Two-lead CNN | **95.5%** | 0.616 | **98.3** / 97.0 | 43.4 / **61.6** | **98.6** / **95.5** | 0.5 / 0.9 |
+| Logistic regression (features) | 85.5% | 0.593 | 85.8 / **99.2** | **90.4** / 31.3 | 82.8 / 92.8 | **52.6** / 6.3 |
+| CNN (10-seed ensemble) | **94.3%** | 0.626 | **97.6** / 96.5 | 26.6 / 36.0 | 96.7 / 91.8 | 20.4 / **47.0** |
+| Ensemble + AF-aware rule | 90.7% | 0.645 | 91.9 / 98.6 | 79.8 / **48.4** | 87.0 / **93.1** | 45.6 / 7.3 |
+| **Ensemble + AF rule + fusion gate (main)** | 92.3% | **0.658** | 93.6 / 98.6 | 80.1 / 48.0 | 87.0 / 90.8 | 45.6 / 11.5 |
+| Two-lead CNN | 94.2% | 0.574 | 97.3 / 96.5 | 30.6 / 41.0 | **98.8** / 92.7 | 1.6 / 2.1 |
 
-**Seed variance (single CNNs, mean ± std over 3 seeds on DS2):** macro-F1 0.614 ± 0.057 (one lead) and
-0.601 ± 0.044 (two leads); S sensitivity 38.5 ± 14.3% and 42.3 ± 20.5% (`results/cnn*_seeds.json`).
+Compared with the first version (one template per patient, 3 CNN seeds), the main pipeline goes from
+90.1% to 92.3% accuracy and from 0.631 to 0.658 macro-F1 on DS2
+(SVDB 0.510 → 0.528, INCART 0.461 → 0.490;
+first-version tables in [`docs/v1_final_results.md`](docs/v1_final_results.md)).
 
 ### External test sets (never used for training or tuning)
 | Model | SVDB Acc | SVDB Macro-F1 | SVDB S Se / +P | INCART Acc | INCART Macro-F1 | INCART S Se / +P |
 |---|---|---|---|---|---|---|
-| Logistic regression | 67.6% | 0.498 | 68.6 / 47.3 | 68.6% | 0.449 | 95.7 / 10.9 |
-| CNN | 91.9% | 0.525 | 23.1 / 55.7 | 95.5% | 0.626 | 83.2 / 40.8 |
-| **Ensemble + AF rule + fusion gate** | 72.4% | 0.510 | 64.4 / 50.8 | 72.9% | 0.461 | 95.6 / 11.4 |
-| Two-lead CNN | 92.2% | 0.528 | 27.1 / 59.1 | 97.8% | 0.674 | 61.4 / 73.6 |
+| Logistic regression | 70.1% | 0.498 | 66.5 / 43.9 | 69.9% | 0.456 | 95.8 / 12.0 |
+| CNN | 91.0% | 0.516 | 21.4 / 59.4 | 93.4% | 0.621 | 85.1 / 44.0 |
+| **Ensemble + AF rule + fusion gate (main)** | 79.0% | 0.528 | 61.4 / 50.8 | 78.6% | 0.490 | 95.5 / 15.4 |
+| Two-lead CNN | 92.7% | 0.555 | 39.5 / 60.1 | 96.9% | 0.674 | 77.7 / 72.6 |
 
 SVDB contains only 23 F beats and INCART 219, so N, V and F columns are in `results/final_results.md`.
+
+### Post-hoc AF rule vs joint rhythm-and-beat model
+Both are feature-only models with the fusion gate, so the only difference is how rhythm is used.
+
+| Test set | AF rule: macro-F1 | AF rule: S Se / +P | Joint model: macro-F1 | Joint model: S Se / +P |
+|---|---|---|---|---|
+| DS2 | 0.630 | 84.7 / 40.1 | 0.593 | 23.9 / 38.2 |
+| SVDB | 0.501 | 63.5 / 45.6 | 0.500 | 35.8 / 51.4 |
+| INCART | 0.458 | 95.8 / 11.7 | 0.573 | 69.2 / 33.8 |
+
+Leave-patient-out macro-F1 on DS1: logistic regression 0.540, logistic regression with rhythm × RR interactions 0.528, gradient boosting 0.554.
+Only 2 of the 18 training patients have atrial fibrillation (records 201 and 203), so a learned rhythm model has very
+little AF to learn from; the rule encodes the physiology directly.
+
+### Seed variance and seed ensembling
+Macro-F1 of CNN ensembles of k seeds (lead A; mean ± std over random draws of k of the 10 trained seeds):
+
+| Test set | k = 1 | k = 3 | k = 5 | k = 10 |
+|---|---|---|---|---|
+| DS2 | 0.619 ± 0.036 | 0.624 ± 0.027 | 0.632 ± 0.012 | 0.626 |
+| SVDB | 0.509 ± 0.014 | 0.514 ± 0.010 | 0.516 ± 0.005 | 0.516 |
+| INCART | 0.587 ± 0.025 | 0.612 ± 0.014 | 0.617 ± 0.005 | 0.621 |
+
+Single seeds on DS2: macro-F1 0.537 to 0.656, S sensitivity
+14% to 50% (two leads: macro-F1 0.585 ± 0.034).
+All reported CNN rows use the 10-seed ensemble (`results/seed_ensembles.json`, `results/cnn*_seeds.json`).
 
 ### Fully automatic pipeline (no expert beat positions)
 R peaks found by the XQRS detector (wfdb) instead of the annotations; labels come from the nearest annotation within 150 ms.
@@ -127,104 +163,134 @@ R peaks found by the XQRS detector (wfdb) instead of the annotations; labels com
 | | Result |
 |---|---|
 | QRS detection, 44 MIT-BIH records (100,733 beats) | Se **99.17%**, +P **99.29%** |
-| Logistic regression on detected beats, DS2 | macro-F1 **0.587** · S 87.5 / 30.3 · V 86.7 / 95.5 |
-
-The classifier performs at the same level on automatically detected beats as on expert-annotated ones.
+| Logistic regression on detected beats, DS2 | macro-F1 **0.599** · S 84.6 / 29.9 · V 86.6 / 95.8 |
 
 ## Where the errors come from
 
 ### S errors: atrial fibrillation
 ![Per-patient errors](results/per_patient_errors.png)
 
-Before the AF-aware rule, most false S alarms on DS2 come from the 5 test patients with atrial fibrillation or flutter
-(records 202, 210, 219, 221, 222): during AF the rhythm is irregular, so normal beats often arrive "early", which is
-exactly what an S beat looks like to an RR-based model. The rule removes 1,434 false S alarms at the cost of 111 missed
-S beats. The per-patient table is in [`results/final_results.md`](results/final_results.md).
+During AF the rhythm is irregular, so normal beats often arrive "early", which is exactly what an S beat looks like to
+an RR-based model. On DS2 the AF rule removes 1,270 false S alarms at the cost of 113 missed S beats.
+The per-patient table is in [`results/final_results.md`](results/final_results.md).
 
 ### F errors: one "normal" class, several shapes
-Before the fusion gate, 4,740 of the 7,553 errors on DS2 were beats wrongly called fusion (F).
-They are not random: AAMI's N class merges normal beats with bundle branch block and escape beats, and a model that
-compares every beat with *the patient's own usual beat* sees the minority pattern as "on time, but a different shape",
-which is exactly the signature of a fusion beat.
+In the first version, 4,740 errors on DS2 were beats wrongly called fusion (F). They were not random:
+AAMI's N class merges normal beats with bundle branch block and escape beats, and a model that compares every beat with
+*the patient's single usual beat* sees the minority pattern as "on time, but a different shape", which is exactly the
+signature of a fusion beat.
 
-![False fusion alarms](results/false_fusion.png)
+![False fusion alarms, first version](docs/false_fusion_v1.png)
 
-- **Record 212** has 1,824 right bundle branch block beats and 922 normally conducted beats.
+- **Record 212** has 1,824 right bundle branch block beats and 922 normally conducted beats;
   917 of the normally conducted beats were called F.
 - **Record 231** has the same mix: all 314 of its normally conducted beats were called F.
-- Beat by beat, these alarms look like real fusion (record 213, right). What separates them is context: real fusion needs
-  ventricular beats, and records 117, 212 and 231 have almost none.
 
-The fusion gate uses exactly that context. On DS2, record 117 goes from 44.0% to 98.1% accuracy and record 212
-from 65.3% to 98.7%, without losing a single true F beat:
+Two fixes, one at the root and one as a safety net:
+1. **Several beat patterns per patient.** The patterns are found without labels; the table compares them with the
+   original MIT-BIH annotations (top two beat types per pattern):
+
+| Record | Set | Pattern 1 | Pattern 2 | Pattern 3 |
+|---|---|---|---|---|
+| 230 | DS1 | 1,336 normal, 1 ventricular | 917 normal | – |
+| 108 | DS1 hold-out | 885 normal, 10 ventricular | 453 normal, 1 atrial premature | 399 normal, 7 ventricular |
+| 111 | DS2 | 1,208 LBBB | 913 LBBB, 1 ventricular | – |
+| 117 | DS2 | 880 normal | 652 normal, 1 atrial premature | – |
+| 212 | DS2 | 1,820 RBBB, 2 normal | 920 normal, 4 RBBB | – |
+| 231 | DS2 | 1,249 RBBB, 1 atrial premature | 314 normal, 3 RBBB | – |
+
+   Records 212, 231 and 230 are real conduction changes (bundle branch block and intermittent pre-excitation). In 108, 111
+   and 117 a single beat type is split into two shapes: in 117 the shape changes partway through the recording, in 108 and
+   111 the two shapes alternate throughout; the labels do not say why. No pattern is made of ventricular beats (largest V
+   share in any pattern: 1.7%). False F alarms before the gate: record 212 927 → 21,
+   record 231 318 → 2, record 117 857 → 62.
+
+![Beat patterns](results/templates.png)
+
+2. **Fusion gate.** Real fusion needs ventricular beats, so F predictions are dropped in recordings with almost no
+   predicted V beats:
 
 | Test set | False F alarms | Accuracy | Macro-F1 | F Se | F +P |
 |---|---|---|---|---|---|
-| DS2 | 4,740 → 1,962 | 84.8% → 90.1% | 0.608 → 0.631 | 45.1% → 45.1% | 3.6% → 8.2% |
-| SVDB | 42,572 → 37,762 | 70.0% → 72.4% | 0.507 → 0.510 | 47.8% → 4.3% | 0.0% → 0.0% |
-| INCART | 35,378 → 31,828 | 71.1% → 72.9% | 0.459 → 0.461 | 47.9% → 47.5% | 0.3% → 0.3% |
+| DS2 | 2,239 → 1,360 | 90.7% → 92.3% | 0.645 → 0.658 | 45.6% → 45.6% | 7.3% → 11.5% |
+| SVDB | 29,712 → 25,098 | 76.6% → 79.0% | 0.525 → 0.528 | 47.8% → 4.3% | 0.0% → 0.0% |
+| INCART | 28,427 → 25,379 | 77.0% → 78.6% | 0.488 → 0.490 | 48.4% → 47.9% | 0.4% → 0.4% |
 
-On the external databases the gate helps much less: most of their false F alarms happen in recordings where the model
-also predicts some V beats (correctly or not), so the gate does not switch on. On SVDB it also removes most of the
-23 real F beats.
+On the external databases most false F alarms happen in recordings where the model also predicts some V beats, so the gate
+does not switch on; on SVDB it also removes most of the 23 real F beats.
 
 ## When not to trust a result
-A clinician reading a remote recording needs to know more than "the model is 90% accurate on average": they need to
-know whether *this* recording's result is usable. Beat consistency is a simple, label-free check. In recordings where
-beats keep changing shape (noise, electrode problems, or a patient switching between conduction patterns), the
-"patient's usual beat" is not well defined, and every patient-relative feature becomes unreliable.
+A clinician reading a remote recording needs to know more than "the model is 90% accurate on average": they need to know
+whether *this* recording's result is usable, and if not, why. Three label-free signals, computed per recording
+(thresholds chosen on DS1 patients only):
+
+- ⚠ **Unstable beats** (the warning): share of on-time beats that match none of the patient's own beat patterns
+  (correlation < 0.9). Warning above **6%**. Noise, electrode problems, or shapes the model has not seen.
+- **Frequent early beats** (information): more than **5%** of beats arrive > 15% early (ectopy or irregular rhythm).
+- **Several beat patterns** (information): the patient switches between beat shapes.
 
 ![Reliability](results/reliability.png)
 
-Threshold 0.975 chosen on DS1 patients only; a recording "fails" when its beat accuracy is below 90%.
+A recording "fails" when its beat accuracy is below 90%. The first version of the flag (median correlation with a single
+median beat < 0.975) is shown for comparison.
 
-| Test set | Recordings | Flagged | Failing | Failing and flagged | Flagged but fine | Accuracy, not flagged | Accuracy, flagged | AUROC |
+| Test set | Signal | Flagged | Failing | Failing and flagged | Flagged but fine | Accuracy, not flagged | Accuracy, flagged | AUROC |
 |---|---|---|---|---|---|---|---|---|
-| DS2 | 22 | 8 | 10 | 5 | 3 | 92.0% | 87.1% | 0.80 |
-| SVDB | 78 | 50 | 50 | 45 | 5 | 94.1% | 62.0% | 0.94 |
-| INCART | 75 | 51 | 54 | 44 | 7 | 91.9% | 65.6% | 0.86 |
+| DS2 | first version | 8 | 9 | 4 | 4 | 93.0% | 91.0% | 0.74 |
+| DS2 | **unstable beats** | 11 | 9 | 8 | 3 | 96.5% | 88.7% | 0.94 |
+| SVDB | first version | 50 | 47 | 42 | 8 | 94.5% | 71.6% | 0.92 |
+| SVDB | **unstable beats** | 51 | 47 | 46 | 5 | 96.9% | 71.2% | 0.94 |
+| INCART | first version | 51 | 46 | 40 | 11 | 92.9% | 73.2% | 0.89 |
+| INCART | **unstable beats** | 52 | 46 | 40 | 12 | 93.6% | 73.7% | 0.88 |
 
-On DS2 the flag is weaker, partly because the fusion gate already repaired two of the flagged recordings (117 and 212).
-Most SVDB and INCART recordings are flagged: the model, trained on 18 MIT-BIH patients, is simply less sure of itself
-on data from other hospitals, and the flag says so instead of hiding it.
+**Why the causes matter.** Accuracy by cause (pooled over beats, number of recordings in brackets):
 
-**Recording-level burden.** What a reader usually wants first is the ectopic burden (% of beats). The predicted
-V burden falls in the right category (<1%, 1–10%, ≥10%) for 77% of DS2 recordings
-(86% of the recordings that are not flagged); S burden is much less reliable (32%), because false S
-alarms inflate it. Per-recording summaries for DS2 are in [`results/reliability.md`](results/reliability.md).
+| Test set | No warning, no early beats | Frequent early beats only | Unstable beats |
+|---|---|---|---|
+| DS2 | 98.3% (8) | 91.9% (3) | 88.7% (11) |
+| SVDB | 98.2% (19) | 94.3% (8) | 71.2% (51) |
+| INCART | 95.7% (8) | 92.5% (15) | 73.7% (52) |
+
+Frequent early beats on their own are not a reason to distrust the result: those recordings reach at least
+91.9% accuracy on every test set, while recordings with unstable beats drop to
+88.7% / 71.2% / 73.7%. Per-recording summaries for DS2 (status, causes, AF / V / S burden) are in
+[`results/reliability.md`](results/reliability.md).
+
+**Recording-level burden.** The predicted V burden falls in the right category (<1%, 1–10%, ≥10% of beats) for
+82% of DS2 recordings (91% of those without a warning); S burden is much less reliable
+(32%), because false S alarms inflate it.
 
 ## What I learned
 1. **Normalisation decides S detection.** In the first version, RR intervals were divided by each patient's
    median RR, and both models (random forest and CNN) found only 6–8% of S beats. The cause is record 232: it contains
    1,381 of the 1,836 S beats in DS2, and S beats are the *majority* of its beats, so the "patient median" was itself an
    S rhythm. Local rhythm ratios plus template features raised S sensitivity above 90% with a simple logistic regression.
-2. **Patient-relative features cut both ways.** Comparing each beat with the patient's own usual beat is what makes
-   the model work on new patients, and it is also what creates most of its errors: when a patient has two conduction
-   patterns (record 212), the "usual beat" is a mix, and the minority pattern looks like fusion.
-3. **Clinical context beats calibration.** Rescaling the F probability with a factor chosen on DS1 looked good on DS1 but
-   did not transfer: it removed every F prediction on all three test sets (F sensitivity
-   0% / 0% / 0%). The fusion gate, which encodes one physiological fact and has no tuned
-   parameter, kept every true F beat on DS2 and still removed 59% of the false ones.
-4. **A model should know when it is on unfamiliar ground.** A one-number consistency check, computed without labels,
-   separates recordings the pipeline handles well from recordings it does not, on two databases it never saw.
-5. **AF needs more than a rule.** The AF rule helps on DS2, but on SVDB and INCART the gain is small.
-6. **One training run is not a result.** Three CNN seeds trained the same way give DS2 macro-F1 between 0.54 and 0.68 and
-   S sensitivity between 21% and 56%. Single-run CNN numbers should be read with that spread in mind.
-7. **Accuracy is misleading.** On every test set the most accurate model is a CNN, and on every test set it finds
-   fewer S beats than the logistic regression.
+2. **Patient-relative features cut both ways.** Comparing each beat with the patient's own usual beat is what makes the
+   model work on new patients, and it also created most of its errors: a patient with two conduction patterns has no single
+   "usual beat". Letting each patient have several patterns fixed this at the root, without labels.
+3. **Check that a fix transfers.** Rescaling the F probability looked better on the training patients and removed every F
+   prediction on all three test sets. The joint rhythm-and-beat model beats the post-hoc AF rule on INCART but not on DS2 or SVDB, so the rule stays in the main pipeline. The two rules that encode one physiological fact each (no S beats inside AF; no fusion
+   without ventricular beats) have no tuned parameter and did not lower macro-F1 on any test set.
+4. **A model should know when it is on unfamiliar ground, and say why.** One label-free number, computed per recording,
+   separates recordings the pipeline handles well from recordings it does not, on two databases it never saw. Splitting the
+   warning into causes showed that "unusual" is not the same as "unreliable": frequent early beats are fine, unstable beats are not.
+5. **One training run is not a result.** Single CNN seeds trained the same way give DS2 macro-F1 between
+   0.54 and 0.66; only the averaged ensemble should be reported.
+6. **Accuracy is misleading.** The most accurate model on each test set is a CNN, and it finds fewer S beats than the logistic regression.
 
 ## Limitations
 - The second lead is not the same lead everywhere (V1 on 38 of the 44 MIT-BIH records, V2, V4 or V5 on the others; ECG2 on SVDB),
   and SVDB's first channel (ECG1) is not necessarily MLII. SVDB and INCART are resampled to 360 Hz.
 - F (fusion) beats remain hard: 398 training beats, mostly from one patient. The fusion gate only removes false F alarms
   in recordings without predicted V beats, and on SVDB it removes most of the 23 real F beats.
-- The reliability threshold is chosen on 22 DS1 recordings, and consistency mixes several causes (noise, conduction
-  changes, frequent ectopy) that a clinician would want to see separately.
+- The pattern rules (10% coverage, runs of 3 beats, correlation 0.9 / 0.95) were set by looking at MIT-BIH training
+  records; in some recordings (108, 111, 117) they split one beat type into two shapes.
+- The reliability thresholds are chosen on 22 DS1 recordings, and "unstable beats" does not yet separate noise from
+  shapes that are real but rare.
+- Only 2 training patients have atrial fibrillation, which limits any learned rhythm model.
 - The S class in DS2 is dominated by one patient (232), so DS2 S metrics depend heavily on that record.
 - INCART's 75 recordings come from 32 patients, so its recordings are not independent.
-- AF is handled by a post-hoc rule, not by a joint rhythm-and-beat model. The AF detector is scored on DS2 only,
-  because rhythm labels are not used for SVDB and INCART.
-- Features use the whole recording (patient template, RR context after the beat), so this is an offline (Holter-style)
+- Features use the whole recording (patient patterns, RR context after the beat), so this is an offline (Holter-style)
   analysis, not a real-time detector.
 
 ## Next steps
@@ -236,10 +302,13 @@ alarms inflate it. Per-recording summaries for DS2 are in [`results/reliability.
 - [x] Two-lead input and a third database with a different lead setup (St Petersburg INCART)
 - [x] Explain and reduce false F alarms (fusion gate)
 - [x] Label-free reliability flag per recording
-- [ ] Several templates per patient (one per conduction pattern) instead of a single median beat
-- [ ] Separate the reliability flag into causes (noise vs conduction changes) so the warning is actionable
-- [ ] Joint rhythm-and-beat model instead of a post-hoc AF rule
-- [ ] More seeds and seed ensembling to reduce CNN variance
+- [x] Several templates per patient (one per conduction pattern) instead of a single median beat
+- [x] Separate the reliability flag into causes (unstable beats vs frequent early beats vs several patterns)
+- [x] Joint rhythm-and-beat model instead of a post-hoc AF rule (tested; the rule transfers better)
+- [x] More seeds and seed ensembling to reduce CNN variance
+- [ ] Train the rhythm model on more AF patients (e.g. a dedicated AF database) before trying a joint model again
+- [ ] Validate the unstable-beats warning against recordings with known added noise (MIT-BIH Noise Stress Test Database)
+- [ ] A real-time version that only uses past beats
 
 ## Reproduce
 ```bash
@@ -251,24 +320,25 @@ bash scripts/download_incart.command     # St Petersburg INCART (~800 MB, option
 bash scripts/run_all.command             # features, baselines, detection, CNNs, AF detector, evaluation, analysis, plots
 bash scripts/update_results.command      # re-run evaluation + analysis only, with the trained CNNs (1-2 minutes)
 ```
-Downloads are resumable. If INCART is not downloaded, `evaluate.py` skips it. Runs on Apple Silicon (MPS), CUDA or CPU;
-training the CNNs (3 seeds each, one and two leads) takes about 5 minutes on an Apple M-series laptop.
+Downloads are resumable. If INCART is not downloaded, `evaluate.py` skips it. Runs on Apple Silicon (MPS), CUDA or CPU.
 The `.command` scripts are plain bash scripts and run on macOS and Linux.
 
 ## Project structure
 ```
-src/data.py          beat extraction, RR + template + rhythm features, R-peak detection, DS1/DS2 split, SVDB/INCART loaders
-src/model.py         BeatNet (1D CNN over beat + beat-minus-template, fused with the features)
+src/data.py          beat extraction, beat patterns per patient, RR + template + rhythm features, R-peak detection, loaders
+src/model.py         BeatNet (1D CNN over beat + beat-minus-pattern, fused with the features)
 src/af.py            AF detector (leave-patient-out CV on DS1) and the AF-aware rule
-src/reliability.py   fusion gate, beat consistency, per-recording summaries
+src/joint.py         joint rhythm-and-beat model (experiment)
+src/reliability.py   fusion gate, label-free reliability signals and causes, per-recording summaries
 src/metrics.py       AAMI per-class metrics and confusion matrices
 baseline.py          logistic regression and gradient boosting (features only)
 detection.py         QRS detector evaluation + fully automatic pipeline
-train.py             CNN training (3 seeds; --leads 1 or 2)
-evaluate.py          ensembles, AF rule, fusion gate, evaluation on DS2 / SVDB / INCART, per-patient analysis
-analysis.py          recording-level analysis: false fusion alarms, reliability flag, ectopic burden
+train.py             CNN training (10 seeds; --leads 1 or 2)
+evaluate.py          ensembles, AF rule, fusion gate, joint model, seed ensembling, evaluation on DS2 / SVDB / INCART
+analysis.py          recording-level analysis: beat patterns, false fusion alarms, reliability warning, ectopic burden
 scripts/             data downloads, full pipeline, evaluation-only update, comparison plot
 results/             metrics, plots, final_results.md and reliability.md (see results/README.md for an index)
+docs/                first-version results (one template per patient), kept for comparison
 ```
 
 ## Data and references

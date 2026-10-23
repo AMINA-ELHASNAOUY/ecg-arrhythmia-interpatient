@@ -5,16 +5,25 @@ Every beat is described *relative to its own patient*, because what generalises 
 people is "how different is this beat from this person's usual beat / rhythm", not the raw shape.
 Two leads are used (lead A = MLII on MIT-BIH, ECG1 on SVDB, II on INCART; lead B = the second channel / V1).
 
-  x      (4, 256)  lead A beat, lead A beat - patient template, lead B beat, lead B beat - template
+  x      (4, 256)  lead A beat, lead A beat - nearest patient template, lead B beat, lead B beat - template
   f      (15,)     7 local RR features (log ratios) + 4 template features for lead A + 4 for lead B
   r      (8,)      rhythm context for the AF detector: 6 RR-irregularity features over +-15 beats
                    + 2 P-wave consistency features (atrial fibrillation has no regular P wave)
   af     bool      beat lies in an atrial fibrillation / flutter episode (MIT-BIH rhythm annotations)
+  tmpl   int       which of the patient's templates (conduction patterns, lead A) the beat is closest to
+  n_tmpl int       number of conduction patterns found in the beat's recording (lead A)
+  consist float    correlation of the beat with the patient's single median beat (lead A), for the reliability flag
 
 Beats can be located from the expert annotations (peaks="annotated") or automatically with XQRS
 (peaks="detected"; labels from the nearest annotation within 150 ms).
 Labels follow AAMI EC57: N, S, V, F (Q beats dropped, paced records excluded).
 Templates and rhythm features use the unlabeled signal only.
+
+Templates: a patient can have more than one normal conduction pattern (e.g. intermittent bundle branch block).
+With a single median beat, the minority pattern looks "on time but different", which is exactly what a fusion
+beat looks like. So the on-time beats of each recording are clustered into up to MAX_TEMPLATES patterns, and each
+beat is compared with its nearest pattern. Premature beats (most S and V beats) never create a pattern, so
+frequent ectopy cannot turn into a "normal" template.
 """
 from fractions import Fraction
 from pathlib import Path
@@ -35,6 +44,12 @@ QRS = slice(70, 115)             # ~ +-60 ms around the R peak
 PWAVE = slice(18, 50)            # ~ -200 .. -110 ms before the R peak
 MATCH_TOL = int(0.15 * FS)       # 150 ms, AAMI beat-matching window
 RHYTHM_W = 15                    # beats on each side for rhythm context
+MAX_TEMPLATES = 3                # conduction patterns per patient (1 = a single median beat, the first version)
+MIN_PATTERN = 0.10               # a conduction pattern must cover >= 10% of the recording's beats
+ONTIME = 0.10                    # |log(RR / local RR)| below this = the beat is not premature or late
+MIN_RUN_FRACTION = 0.5           # >= 50% of a pattern's beats must sit in runs of >= 3 consecutive beats
+                                 # (MIT-BIH: conduction changes 98-100%, V beats at most 38%)
+FEATURE_VERSION = "v2"           # v2: multi-template features; cached beat files are rebuilt when this changes
 CLASSES = ["N", "S", "V", "F"]
 RR_NAMES = ["pre/local10", "post/local10", "pre/post", "pre/prev_pre",
             "local10/local50", "pre/local50", "post/local50"]
@@ -140,16 +155,69 @@ def _windows(x, peaks):
     return _znorm_rows(w)
 
 
-def _template_features(w):
-    template = np.median(w, axis=0)                  # all beats of the record, labels not used
+def _corr_matrix(a, t):
+    """Correlation of every row of a with every row of t -> (len(a), len(t))."""
+    a = _znorm_rows(a)
+    t = _znorm_rows(t)
+    return a @ t.T / a.shape[1]
+
+
+def _run_fraction(mask, min_len=3):
+    """Fraction of the True values that sit in runs of >= min_len consecutive True values."""
+    edges = np.flatnonzero(np.diff(np.r_[0, mask.astype(np.int8), 0]))
+    runs = edges[1::2] - edges[::2]
+    return float(runs[runs >= min_len].sum() / max(runs.sum(), 1))
+
+
+def find_templates(w, ontime, max_templates=MAX_TEMPLATES):
+    """Conduction patterns of one recording (labels not used).
+
+    Starts from the median beat. On-time beats that match no template (whole-beat corr < 0.9) seed a new
+    pattern; patterns are refined like k-means (median of their on-time members) and kept only if they cover
+    >= MIN_PATTERN of all beats, most of their members are on time, they come in runs of consecutive beats
+    (a conduction change lasts for a while; ectopic beats are scattered), and they differ clearly from the
+    other patterns (corr < 0.95). Whole beats are compared, because conduction changes such as bundle branch block
+    show most in the ST-T segment."""
+    n = len(w)
+    templates = [np.median(w, 0)]
+    if max_templates == 1 or ontime.sum() < 2 * MIN_PATTERN * n:
+        return np.stack(templates)
+    for _ in range(max_templates - 1):
+        c = _corr_matrix(w[ontime], np.stack(templates)).max(1)
+        seed = w[ontime][c < 0.9]
+        if len(seed) < MIN_PATTERN * n:
+            break
+        cand = templates + [np.median(seed, 0)]
+        for _ in range(5):
+            a = _corr_matrix(w, np.stack(cand)).argmax(1)
+            cand = [np.median(w[(a == k) & ontime], 0) if ((a == k) & ontime).sum() > 0 else cand[k]
+                    for k in range(len(cand))]
+        a = _corr_matrix(w, np.stack(cand)).argmax(1)
+        keep = [k for k in range(len(cand))
+                if ((a == k) & ontime).sum() >= MIN_PATTERN * n and ontime[a == k].mean() >= 0.6
+                and _run_fraction(a == k) >= MIN_RUN_FRACTION]
+        merged = []                                  # drop near-duplicate patterns
+        for t in [cand[k] for k in keep]:
+            if all(_corr_matrix(t[None], u[None])[0, 0] < 0.95 for u in merged):
+                merged.append(t)
+        if len(merged) <= len(templates):
+            break
+        templates = merged
+    return np.stack(templates)
+
+
+def _template_features(w, ontime, max_templates=MAX_TEMPLATES):
+    templates = find_templates(w, ontime, max_templates)
+    nearest = _corr_matrix(w, templates).argmax(1)
+    template = templates[nearest]                    # each beat's own conduction pattern
     diff = w - template
     feats = np.stack([
-        _corr_rows(w, template),
-        _corr_rows(w[:, QRS], template[QRS]),
+        ((_znorm_rows(w) * _znorm_rows(template)).mean(1)),
+        ((_znorm_rows(w[:, QRS]) * _znorm_rows(template[:, QRS])).mean(1)),
         np.sqrt((diff ** 2).mean(1)),
         np.sqrt((diff[:, QRS] ** 2).mean(1)),
     ], 1)
-    return diff, feats
+    return diff, feats, nearest, len(templates)
 
 
 def _autocorr(x, lag):
@@ -184,8 +252,10 @@ def beats_from_peaks(xa, xb, peaks, labels, af):
           if peaks[k] - BEFORE >= 0 and peaks[k] + AFTER <= min(len(xa), len(xb))]
     pk = peaks[ks]
     wa, wb = _windows(xa, pk), _windows(xb, pk)
-    da, ta = _template_features(wa)
-    db, tb = _template_features(wb)
+    pre_rr = np.array([max(rr[k - 1], 1e-3) / rr[max(0, k - 10):k].mean() for k in ks])
+    ontime = np.abs(np.log(pre_rr)) < ONTIME
+    da, ta, tmpl, n_tmpl = _template_features(wa, ontime)
+    db, tb, _, _ = _template_features(wb, ontime)
 
     rrf, rhy = [], []
     for k in ks:
@@ -208,7 +278,9 @@ def beats_from_peaks(xa, xb, peaks, labels, af):
     f = np.hstack([rrf, ta, tb])
     return {"x": x[keep].astype(np.float16), "f": f[keep].astype(np.float32),
             "r": rhythm[keep].astype(np.float32), "y": y[keep].astype(np.int64),
-            "af": np.asarray([af[k] for k in ks])[keep]}
+            "af": np.asarray([af[k] for k in ks])[keep],
+            "tmpl": tmpl[keep].astype(np.int8), "n_tmpl": np.full(int(keep.sum()), n_tmpl, np.int8),
+            "consist": _corr_rows(wa, np.median(wa, 0))[keep].astype(np.float32)}
 
 
 def load_record(db_dir, rec, peaks="annotated", db="mitdb"):
@@ -229,7 +301,7 @@ def load_record(db_dir, rec, peaks="annotated", db="mitdb"):
 
 # ---------------------------------------------------------------- datasets
 def _stack(parts, recs, prefix):
-    out = {f"{prefix}_{k}": np.concatenate([p[k] for p in parts]) for k in ["x", "f", "r", "y", "af"]}
+    out = {f"{prefix}_{k}": np.concatenate([p[k] for p in parts]) for k in ["x", "f", "r", "y", "af", "tmpl", "n_tmpl", "consist"]}
     out[f"{prefix}_rec"] = np.concatenate([np.full(len(p["y"]), i) for i, p in enumerate(parts)])
     out[f"{prefix}_recname"] = np.array([str(r) for r in recs])
     return out
@@ -243,7 +315,7 @@ def build_mitdb(peaks="annotated"):
         part[f"{name}_rec"] = np.asarray(recs)[part[f"{name}_rec"]]     # real record numbers
         out.update(part)
         stats += [r[1] for r in res if r[1]]
-    np.savez_compressed(DATA_DIR / f"mitdb_{peaks}.npz", **out)
+    np.savez_compressed(beats_path("mitdb", peaks), **out)
     return out, stats
 
 
@@ -256,8 +328,12 @@ def build_external(db, peaks="annotated"):
     recs = records(db_dir)
     res = [load_record(db_dir, r, peaks, db) for r in recs]
     out = _stack([r[0] for r in res], recs, "ext")
-    np.savez_compressed(DATA_DIR / f"{db}_{peaks}.npz", **out)
+    np.savez_compressed(beats_path(db, peaks), **out)
     return out, [r[1] for r in res if r[1]]
+
+
+def beats_path(db, peaks="annotated"):
+    return DATA_DIR / f"{db}_{peaks}_{FEATURE_VERSION}.npz"
 
 
 def _load(path, builder):
@@ -272,11 +348,11 @@ def _load(path, builder):
 
 
 def load_splits(peaks="annotated"):
-    return _load(DATA_DIR / f"mitdb_{peaks}.npz", lambda: build_mitdb(peaks))
+    return _load(beats_path("mitdb", peaks), lambda: build_mitdb(peaks))
 
 
 def load_external(db="svdb", peaks="annotated"):
-    return _load(DATA_DIR / f"{db}_{peaks}.npz", lambda: build_external(db, peaks))
+    return _load(beats_path(db, peaks), lambda: build_external(db, peaks))
 
 
 if __name__ == "__main__":

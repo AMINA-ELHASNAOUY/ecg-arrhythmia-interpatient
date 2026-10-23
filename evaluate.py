@@ -4,7 +4,9 @@
   * INCART - 75 recordings, St Petersburg INCART 12-lead database (external, if downloaded)
 
 Main pipeline (lead A only): logistic regression, CNN (3 seeds averaged), their ensemble, the ensemble
-with the AF-aware rule, and finally the recording-level fusion gate (src/reliability.py). Multi-lead experiment: the same logistic regression / CNN / ensemble with both leads.
+with the AF-aware rule, and finally the recording-level fusion gate (src/reliability.py).
+Experiments: the joint rhythm-and-beat model (src/joint.py) instead of the AF rule, the two-lead models,
+and seed ensembling (how much averaging k CNN seeds reduces the spread between runs). Multi-lead experiment: the same logistic regression / CNN / ensemble with both leads.
 Everything that is chosen (ensemble weight, AF detector, AF threshold) is chosen on DS1 patients only;
 the fusion gate threshold (1%) is fixed in advance.
 The logistic regressions are trained on the 18 DS1 training patients so the 4 validation patients stay
@@ -24,19 +26,22 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.af import AFDetector, af_metrics, apply_af_rule
+from src.joint import JointModel
 from src.data import CLASSES, INCART_DIR, N_LEAD_A_FEATURES, load_external, load_splits
 from src.metrics import macro_f1, report, save_report, table
-from src.reliability import CONSISTENCY_COL, TAU, fusion_gate
+from src.reliability import FIT_COL, RR_PRE_COL, TAU, fusion_gate
 from src.model import BeatNet
 
 RESULTS = Path(__file__).resolve().parent / "results"
 DATA = Path(__file__).resolve().parent / "data"
 MODEL_NAMES = {
     "lr": "Logistic regression",
-    "cnn": "CNN (3-seed average)",
+    "cnn": "CNN (seed ensemble)",
     "ensemble": "Ensemble (LR + CNN)",
     "ensemble_af": "Ensemble + AF-aware rule",
     "ensemble_af_gate": "**Ensemble + AF rule + fusion gate**",
+    "lr_af_gate": "Logistic regression + AF rule + fusion gate",
+    "joint_gate": "Joint rhythm-and-beat model + fusion gate",
     "lr_2lead": "Two leads: logistic regression",
     "cnn_2lead": "Two leads: CNN",
     "ensemble_2lead": "Two leads: ensemble",
@@ -54,12 +59,31 @@ def device():
 
 @torch.no_grad()
 def cnn_proba(models, x, f, dev, bs=2048):
+    """Per-seed probabilities, shape (n_seeds, n_beats, 4)."""
     out = []
     for i in range(0, len(x), bs):
         xb = torch.from_numpy(x[i:i + bs]).to(dev)
         fb = torch.from_numpy(f[i:i + bs]).to(dev)
-        out.append(torch.stack([m(xb, fb).softmax(1) for m in models]).mean(0).cpu())
-    return torch.cat(out).numpy()
+        out.append(torch.stack([m(xb, fb).softmax(1) for m in models]).cpu())
+    return torch.cat(out, 1).numpy()
+
+
+def seed_ensembles(per_seed, y, sizes=(1, 3, 5, 10), draws=30):
+    """Macro-F1 of ensembles of k randomly drawn seeds: mean and spread over draws."""
+    rng = np.random.default_rng(0)
+    n = len(per_seed)
+    out = {}
+    for k in [k for k in sizes if k <= n]:
+        if k == n:
+            subsets = [np.arange(n)]
+        elif k == 1:
+            subsets = [np.array([i]) for i in range(n)]
+        else:
+            subsets = [rng.choice(n, k, replace=False) for _ in range(draws)]
+        scores = [macro_f1(y, per_seed[s].mean(0).argmax(1)) for s in subsets]
+        out[str(k)] = {"mean": round(float(np.mean(scores)), 4), "std": round(float(np.std(scores)), 4),
+                       "min": round(float(np.min(scores)), 4), "max": round(float(np.max(scores)), 4)}
+    return out
 
 
 def per_patient(y, rec, pred):
@@ -110,6 +134,7 @@ def main():
         "_2lead": (slice(0, None), slice(0, 4), "_2lead"),
     }
     P = {name: {} for name in sets}
+    seed_probs = {}
     for suffix, (cols, ch, tag) in configs.items():
         lr = lr_model(cols)
         nf = d["train_f"][:, cols].shape[1]
@@ -120,13 +145,19 @@ def main():
             k = split_key[name]
             f = data[f"{k}_f"][:, cols]
             P[name][f"lr{suffix}"] = lr.predict_proba(f)
-            P[name][f"cnn{suffix}"] = cnn_proba(models, np.ascontiguousarray(data[f"{k}_x"][:, ch]),
-                                                ((f - norm["mu"]) / norm["sd"]).astype(np.float32), dev)
+            per_seed = cnn_proba(models, np.ascontiguousarray(data[f"{k}_x"][:, ch]),
+                                 ((f - norm["mu"]) / norm["sd"]).astype(np.float32), dev)
+            P[name][f"cnn{suffix}"] = per_seed.mean(0)
+            if name != "val":
+                seed_probs[(name, suffix)] = per_seed
 
     af = AFDetector().fit(d["train_r"], d["train_af"], d["train_rec"])
     print("AF detector:", af.summary())
+    joint = JointModel().fit(d["train_f"], d["train_r"], d["train_y"], d["train_rec"])
+    print("joint rhythm-and-beat model:", joint.summary())
     for name, data in sets.items():
         P[name]["af"] = af.predict(data[f"{split_key[name]}_r"])
+        P[name]["joint"] = joint.predict_proba(data[f"{split_key[name]}_f"], data[f"{split_key[name]}_r"])
 
     # ---- ensemble weights on validation patients (N/S/V macro-F1; val has only 16 F beats)
     grid = np.round(np.arange(0, 1.0001, 0.05), 2)
@@ -152,11 +183,15 @@ def main():
         w2 = weights["_2lead"]
         preds[name] = {"lr": p["lr"].argmax(1), "cnn": p["cnn"].argmax(1), "ensemble": ens,
                        "ensemble_af": ens_af, "ensemble_af_gate": fusion_gate(ens_p, ens_af, rec),
+                       "lr_af_gate": fusion_gate(p["lr"], apply_af_rule(p["lr"].argmax(1), p["af"]), rec),
+                       "joint_gate": fusion_gate(p["joint"], p["joint"].argmax(1), rec),
                        "lr_2lead": p["lr_2lead"].argmax(1), "cnn_2lead": p["cnn_2lead"].argmax(1),
                        "ensemble_2lead": (w2 * p["lr_2lead"] + (1 - w2) * p["cnn_2lead"]).argmax(1)}
         saved[name] = {"y": y, "rec": rec.astype(str), "prob": ens_p.astype(np.float32),
                        "pred": preds[name]["ensemble_af_gate"], "af_pred": p["af"],
-                       "consistency": data[f"{k}_f"][:, CONSISTENCY_COL].astype(np.float32)}
+                       "consistency": data[f"{k}_consist"], "n_patterns": data[f"{k}_n_tmpl"],
+                       "fit": data[f"{k}_f"][:, FIT_COL].astype(np.float32),
+                       "rr_pre": data[f"{k}_f"][:, RR_PRE_COL].astype(np.float32)}
         for model, pr in preds[name].items():
             rep = report(y, pr)
             reports[(name, model)] = rep
@@ -166,6 +201,10 @@ def main():
                "note": "SVDB and INCART have no rhythm annotations; the detector is scored on MIT-BIH DS2 only."}
     (RESULTS / "af_detector.json").write_text(json.dumps(af_eval, indent=2))
     (RESULTS / "ensemble.json").write_text(json.dumps({"weight_lr": weights, "val_grid": val_grid}, indent=2))
+    (RESULTS / "joint_model.json").write_text(json.dumps(joint.summary(), indent=2))
+    seeds = {f"{name}{suffix or ''}": seed_ensembles(ps, sets[name][f"{split_key[name]}_y"])
+             for (name, suffix), ps in seed_probs.items()}
+    (RESULTS / "seed_ensembles.json").write_text(json.dumps(seeds, indent=2))
     np.savez_compressed(DATA / "predictions.npz",
                         **{f"{n}__{key}": v for n, d_ in saved.items() for key, v in d_.items()})
 

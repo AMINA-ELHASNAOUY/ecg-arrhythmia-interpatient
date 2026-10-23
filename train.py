@@ -1,8 +1,9 @@
 """Train the CNN on DS1 patients, early-stop on held-out DS1 patients, evaluate once on DS2.
 
-Runs several seeds and reports mean +- std, so the numbers are not one lucky run.
+Runs 10 seeds and reports mean +- std, so the numbers are not one lucky run. evaluate.py averages all seeds
+(a seed ensemble) and measures how the spread shrinks when k seeds are averaged.
 
-    python train.py               # main pipeline: lead A, 3 seeds
+    python train.py               # main pipeline: lead A, 10 seeds
     python train.py --leads 2     # multi-lead experiment
     python train.py --seeds 1 --epochs 3   # quick smoke test
 """
@@ -105,7 +106,7 @@ def main():
     ap.add_argument("--patience", type=int, default=8)
     ap.add_argument("--bs", type=int, default=256)
     ap.add_argument("--lr", type=float, default=1e-3)
-    ap.add_argument("--seeds", type=int, default=3)
+    ap.add_argument("--seeds", type=int, default=10)
     ap.add_argument("--leads", type=int, default=1, choices=[1, 2],
                     help="1 = lead A only (main pipeline), 2 = both leads (multi-lead experiment)")
     args = ap.parse_args()

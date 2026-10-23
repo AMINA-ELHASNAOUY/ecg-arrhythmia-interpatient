@@ -1,56 +1,56 @@
 {
-  "accuracy": 0.8298,
-  "macro_f1": 0.5865,
+  "accuracy": 0.8564,
+  "macro_f1": 0.5994,
   "per_class": {
     "N": {
       "support": 44195,
-      "sensitivity": 0.8279,
-      "ppv": 0.9915,
-      "f1": 0.9023
+      "sensitivity": 0.8584,
+      "ppv": 0.9912,
+      "f1": 0.92
     },
     "S": {
       "support": 1824,
-      "sensitivity": 0.8745,
-      "ppv": 0.3032,
-      "f1": 0.4503
+      "sensitivity": 0.8459,
+      "ppv": 0.2991,
+      "f1": 0.442
     },
     "V": {
       "support": 3095,
-      "sensitivity": 0.8672,
-      "ppv": 0.9545,
-      "f1": 0.9088
+      "sensitivity": 0.8662,
+      "ppv": 0.9575,
+      "f1": 0.9096
     },
     "F": {
       "support": 384,
-      "sensitivity": 0.5417,
-      "ppv": 0.046,
-      "f1": 0.0847
+      "sensitivity": 0.599,
+      "ppv": 0.0704,
+      "f1": 0.126
     }
   },
   "confusion_matrix": [
     [
-      36588,
-      3561,
-      107,
-      3939
+      37936,
+      3515,
+      98,
+      2646
     ],
     [
-      141,
-      1595,
+      189,
+      1543,
       9,
-      79
+      83
     ],
     [
-      10,
-      102,
-      2684,
-      299
+      9,
+      98,
+      2681,
+      307
     ],
     [
-      162,
+      140,
       2,
       12,
-      208
+      230
     ]
   ],
   "note": "beats located by XQRS; missed beats are not classified (see detector.json)"

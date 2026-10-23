@@ -1,80 +1,156 @@
 {
   "ds1": {
-    "threshold": 0.975,
-    "youden_grid": {
-      "0.8": 0.1111111111111111,
-      "0.805": 0.1111111111111111,
-      "0.81": 0.1111111111111111,
-      "0.815": 0.1111111111111111,
-      "0.82": 0.1111111111111111,
-      "0.825": 0.1111111111111111,
-      "0.83": 0.1111111111111111,
-      "0.835": 0.1111111111111111,
-      "0.84": 0.2222222222222222,
-      "0.845": 0.2222222222222222,
-      "0.85": 0.3333333333333333,
-      "0.855": 0.3333333333333333,
-      "0.86": 0.3333333333333333,
-      "0.865": 0.3333333333333333,
-      "0.87": 0.3333333333333333,
-      "0.875": 0.3333333333333333,
-      "0.88": 0.3333333333333333,
-      "0.885": 0.3333333333333333,
-      "0.89": 0.3333333333333333,
-      "0.895": 0.3333333333333333,
-      "0.9": 0.3333333333333333,
-      "0.905": 0.3333333333333333,
-      "0.91": 0.3333333333333333,
-      "0.915": 0.3333333333333333,
-      "0.92": 0.3333333333333333,
-      "0.925": 0.3333333333333333,
-      "0.93": 0.3333333333333333,
-      "0.935": 0.3333333333333333,
-      "0.94": 0.3333333333333333,
-      "0.945": 0.3333333333333333,
-      "0.95": 0.3333333333333333,
-      "0.955": 0.3333333333333333,
-      "0.96": 0.3333333333333333,
-      "0.965": 0.3333333333333333,
-      "0.97": 0.5555555555555556,
-      "0.975": 0.6666666666666666,
-      "0.98": 0.6666666666666666,
-      "0.985": 0.6239316239316239,
-      "0.99": 0.39316239316239315,
-      "0.995": 0.15384615384615385
+    "thresholds": {
+      "unstable": 0.06,
+      "early": 0.05,
+      "consistency": 0.975
     },
     "gate_check": {
       "macro_f1": [
-        0.4929,
-        0.4934
+        0.5131,
+        0.5138
       ],
       "F_sensitivity": [
-        0.4855,
-        0.4855
+        0.5217,
+        0.5217
       ],
       "F_ppv": [
-        0.0445,
-        0.0566
+        0.0678,
+        0.0695
       ]
     },
     "f_scaling": {
       "ds1_macro_f1": {
-        "1": 0.4929,
-        "0.5": 0.5015,
-        "0.3": 0.5086,
-        "0.2": 0.5138,
-        "0.1": 0.5332,
-        "0.05": 0.5441,
-        "0.03": 0.5398,
-        "0.02": 0.5301,
-        "0.01": 0.509
+        "1": 0.5131,
+        "0.5": 0.5264,
+        "0.3": 0.5363,
+        "0.2": 0.5448,
+        "0.1": 0.5582,
+        "0.05": 0.5624,
+        "0.03": 0.563,
+        "0.02": 0.5536,
+        "0.01": 0.5341
       },
-      "chosen_alpha": 0.05
+      "chosen_alpha": 0.03
     }
   },
-  "f_scaling_test": {
-    "DS2": {
-      "macro_f1": 0.5994,
+  "patterns": {
+    "recordings": {
+      "230": {
+        "split": "DS1",
+        "patterns": [
+          {
+            "N": 1336,
+            "V": 1
+          },
+          {
+            "N": 917
+          }
+        ]
+      },
+      "108": {
+        "split": "DS1 hold-out",
+        "patterns": [
+          {
+            "V": 10,
+            "N": 885,
+            "A": 3,
+            "j": 1
+          },
+          {
+            "N": 453,
+            "A": 1
+          },
+          {
+            "N": 399,
+            "V": 7,
+            "F": 2
+          }
+        ]
+      },
+      "111": {
+        "split": "DS2",
+        "patterns": [
+          {
+            "L": 1208
+          },
+          {
+            "L": 913,
+            "V": 1
+          }
+        ]
+      },
+      "117": {
+        "split": "DS2",
+        "patterns": [
+          {
+            "N": 880
+          },
+          {
+            "N": 652,
+            "A": 1
+          }
+        ]
+      },
+      "212": {
+        "split": "DS2",
+        "patterns": [
+          {
+            "R": 1820,
+            "N": 2
+          },
+          {
+            "N": 920,
+            "R": 4
+          }
+        ]
+      },
+      "231": {
+        "split": "DS2",
+        "patterns": [
+          {
+            "R": 1249,
+            "A": 1
+          },
+          {
+            "R": 3,
+            "N": 314,
+            "V": 2
+          }
+        ]
+      }
+    },
+    "max_ventricular_share_of_a_pattern": 0.01715686274509804
+  },
+  "DS2": {
+    "fusion_gate": {
+      "before": {
+        "accuracy": 0.9074,
+        "macro_f1": 0.6448,
+        "F": {
+          "support": 388,
+          "sensitivity": 0.4562,
+          "ppv": 0.0733,
+          "f1": 0.1262
+        }
+      },
+      "after": {
+        "accuracy": 0.9228,
+        "macro_f1": 0.6581,
+        "F": {
+          "support": 388,
+          "sensitivity": 0.4562,
+          "ppv": 0.1152,
+          "f1": 0.1839
+        }
+      },
+      "false_F": [
+        2239,
+        1360
+      ]
+    },
+    "f_scaling": {
+      "macro_f1": 0.6171,
       "F": {
         "support": 388,
         "sensitivity": 0.0,
@@ -82,356 +158,488 @@
         "f1": 0.0
       }
     },
-    "SVDB": {
-      "macro_f1": 0.5141,
-      "F": {
-        "support": 23,
-        "sensitivity": 0.0,
-        "ppv": 0.0,
-        "f1": 0.0
-      }
-    },
-    "INCART": {
-      "macro_f1": 0.4773,
-      "F": {
-        "support": 219,
-        "sensitivity": 0.0,
-        "ppv": 0.0,
-        "f1": 0.0
-      }
-    }
-  },
-  "DS2": {
-    "fusion_gate": {
-      "before": {
-        "accuracy": 0.8479,
-        "macro_f1": 0.6082,
-        "F": {
-          "support": 388,
-          "sensitivity": 0.451,
-          "ppv": 0.0356,
-          "f1": 0.066
-        }
-      },
-      "after": {
-        "accuracy": 0.9012,
-        "macro_f1": 0.6313,
-        "F": {
-          "support": 388,
-          "sensitivity": 0.451,
-          "ppv": 0.0819,
-          "f1": 0.1386
-        }
-      },
-      "false_F": [
-        4740,
-        1962
-      ]
-    },
-    "reliability": {
-      "recordings": 22,
-      "flagged": 8,
-      "failing": 10,
-      "failing_flagged": 5,
+    "warning": {
+      "flagged": 11,
+      "failing": 9,
+      "failing_flagged": 8,
       "false_flags": 3,
-      "accuracy_flagged": 0.8705650109374167,
-      "accuracy_trusted": 0.9197554822433534,
-      "auroc": 0.8
+      "accuracy_flagged": 0.8869701726844584,
+      "accuracy_trusted": 0.9645959750294669,
+      "auroc": 0.9401709401709402
+    },
+    "consistency_flag": {
+      "flagged": 8,
+      "failing": 9,
+      "failing_flagged": 4,
+      "false_flags": 4,
+      "accuracy_flagged": 0.9100464173291362,
+      "accuracy_trusted": 0.9304935636198978,
+      "auroc": 0.7435897435897436
+    },
+    "groups": {
+      "no warning, no early beats": {
+        "recordings": 8,
+        "accuracy": 0.9829750750199032
+      },
+      "frequent early beats only": {
+        "recordings": 3,
+        "accuracy": 0.9189723320158103
+      },
+      "unstable beats": {
+        "recordings": 11,
+        "accuracy": 0.8869701726844584
+      }
+    },
+    "several_patterns": {
+      "recordings": 4,
+      "accuracy": 0.9711417816813049
     },
     "burden_category_agreement": {
       "V": {
-        "all": 0.7727272727272727,
-        "trusted": 0.8571428571428571,
-        "flagged": 0.625
+        "all": 0.8181818181818182,
+        "trusted": 0.9090909090909091,
+        "warned": 0.7272727272727273
       },
       "S": {
         "all": 0.3181818181818182,
-        "trusted": 0.2857142857142857,
-        "flagged": 0.375
+        "trusted": 0.36363636363636365,
+        "warned": 0.2727272727272727
       }
     },
     "recordings": [
       {
         "record": "100",
         "beats": 2271,
-        "accuracy": 0.9991193306913254,
-        "consistency": 0.9896020889282227,
+        "accuracy": 0.9995596653456627,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0009090909090909091,
+        "early": 0.014971378247468076,
+        "consistency": 0.9896020889282227,
+        "patterns": 1,
         "true_S_burden": 0.01453104359313078,
-        "pred_S_burden": 0.015411712901805373,
+        "pred_S_burden": 0.014971378247468076,
         "true_V_burden": 0.00044033465433729633,
         "pred_V_burden": 0.00044033465433729633,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "103",
         "beats": 2082,
-        "accuracy": 0.9803073967339097,
-        "consistency": 0.9921510219573975,
+        "accuracy": 0.9870317002881844,
         "pred_F_fraction": 0.0,
+        "unstable": 0.004398826979472141,
+        "early": 0.0004803073967339097,
+        "consistency": 0.9921510219573975,
+        "patterns": 1,
         "true_S_burden": 0.0009606147934678194,
-        "pred_S_burden": 0.020653218059558116,
+        "pred_S_burden": 0.013928914505283382,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "105",
         "beats": 2565,
-        "accuracy": 0.8362573099415205,
+        "accuracy": 0.8514619883040936,
+        "pred_F_fraction": 0.06588693957115009,
+        "unstable": 0.1546266233766234,
+        "early": 0.015984405458089667,
         "consistency": 0.9894455075263977,
-        "pred_F_fraction": 0.07329434697855751,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.03859649122807018,
+        "pred_S_burden": 0.0304093567251462,
         "true_V_burden": 0.015984405458089667,
-        "pred_V_burden": 0.053021442495126705,
-        "af_burden": 0.0
+        "pred_V_burden": 0.05380116959064327,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "111",
         "beats": 2122,
-        "accuracy": 0.8397737983034873,
+        "accuracy": 0.9726672950047125,
+        "pred_F_fraction": 0.0,
+        "unstable": 0.06622516556291391,
+        "early": 0.000942507068803016,
         "consistency": 0.9605249166488647,
-        "pred_F_fraction": 0.14326107445805844,
+        "patterns": 2,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.004241281809613572,
+        "pred_S_burden": 0.001413760603204524,
         "true_V_burden": 0.000471253534401508,
-        "pred_V_burden": 0.013195098963242224,
-        "af_burden": 0.0
+        "pred_V_burden": 0.02639019792648445,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "113",
         "beats": 1793,
-        "accuracy": 0.8204127161182376,
-        "consistency": 0.982598066329956,
+        "accuracy": 0.8778583379810374,
         "pred_F_fraction": 0.0,
+        "unstable": 0.07021276595744681,
+        "early": 0.03346346904629113,
+        "consistency": 0.982598066329956,
+        "patterns": 1,
         "true_S_burden": 0.0033463469046291134,
-        "pred_S_burden": 0.18293363078639152,
+        "pred_S_burden": 0.12548800892359174,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "117",
         "beats": 1533,
-        "accuracy": 0.9810828440965427,
-        "consistency": 0.9243394732475281,
+        "accuracy": 0.9863013698630136,
         "pred_F_fraction": 0.0,
+        "unstable": 0.018408941485864562,
+        "early": 0.0006523157208088715,
+        "consistency": 0.9243394732475281,
+        "patterns": 2,
         "true_S_burden": 0.0006523157208088715,
-        "pred_S_burden": 0.0045662100456621,
+        "pred_S_burden": 0.0032615786040443573,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.015003261578604044,
-        "af_burden": 0.0
+        "pred_V_burden": 0.011089367253750815,
+        "af_burden": 0.0,
+        "causes": [
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "121",
         "beats": 1861,
-        "accuracy": 0.9634605051047824,
-        "consistency": 0.9920883178710938,
+        "accuracy": 0.9822675980655562,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0420032310177706,
+        "early": 0.0010746910263299302,
+        "consistency": 0.9920883178710938,
+        "patterns": 1,
         "true_S_burden": 0.0005373455131649651,
-        "pred_S_burden": 0.029016657710908115,
+        "pred_S_burden": 0.010209564750134336,
         "true_V_burden": 0.0005373455131649651,
         "pred_V_burden": 0.008597528210639442,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "123",
         "beats": 1516,
-        "accuracy": 0.9696569920844327,
-        "consistency": 0.9938213229179382,
+        "accuracy": 0.987467018469657,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0017730496453900709,
+        "early": 0.02836411609498681,
+        "consistency": 0.9938213229179382,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.030343007915567283,
+        "pred_S_burden": 0.012532981530343008,
         "true_V_burden": 0.001978891820580475,
         "pred_V_burden": 0.001978891820580475,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "200",
         "beats": 2599,
-        "accuracy": 0.9345902270103886,
+        "accuracy": 0.9522893420546364,
+        "pred_F_fraction": 0.015775298191612157,
+        "unstable": 0.1124031007751938,
+        "early": 0.26279338207002695,
         "consistency": 0.9556148648262024,
-        "pred_F_fraction": 0.022316275490573297,
+        "patterns": 1,
         "true_S_burden": 0.011542901115813775,
-        "pred_S_burden": 0.05040400153905348,
+        "pred_S_burden": 0.04001539053482109,
         "true_V_burden": 0.3174297806848788,
-        "pred_V_burden": 0.29549826856483263,
-        "af_burden": 0.04232397075798384
+        "pred_V_burden": 0.29742208541746823,
+        "af_burden": 0.04232397075798384,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "202",
         "beats": 2134,
-        "accuracy": 0.8416119962511716,
+        "accuracy": 0.8959700093720713,
+        "pred_F_fraction": 0.0,
+        "unstable": 0.11508220157255182,
+        "early": 0.14104967197750704,
         "consistency": 0.9733527898788452,
-        "pred_F_fraction": 0.04170571696344892,
+        "patterns": 1,
         "true_S_burden": 0.02577319587628866,
-        "pred_S_burden": 0.1302717900656045,
+        "pred_S_burden": 0.11808809746954077,
         "true_V_burden": 0.008903467666354265,
-        "pred_V_burden": 0.011246485473289597,
-        "af_burden": 0.33505154639175255
+        "pred_V_burden": 0.010309278350515464,
+        "af_burden": 0.33505154639175255,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "210",
         "beats": 2648,
-        "accuracy": 0.9312688821752266,
+        "accuracy": 0.94297583081571,
+        "pred_F_fraction": 0.02945619335347432,
+        "unstable": 0.05837912087912088,
+        "early": 0.13066465256797583,
         "consistency": 0.9925971031188965,
-        "pred_F_fraction": 0.0377643504531722,
+        "patterns": 1,
         "true_S_burden": 0.008308157099697885,
-        "pred_S_burden": 0.020770392749244714,
+        "pred_S_burden": 0.017371601208459216,
         "true_V_burden": 0.0736404833836858,
-        "pred_V_burden": 0.07061933534743202,
-        "af_burden": 0.7583081570996979
+        "pred_V_burden": 0.07137462235649547,
+        "af_burden": 0.7583081570996979,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "212",
         "beats": 2746,
-        "accuracy": 0.9868900218499636,
-        "consistency": 0.9704759120941162,
+        "accuracy": 0.9930808448652586,
         "pred_F_fraction": 0.0,
+        "unstable": 0.012089157536834151,
+        "early": 0.0003641660597232338,
+        "consistency": 0.9704759120941162,
+        "patterns": 2,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.011289147851420248,
+        "pred_S_burden": 0.006919155134741442,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.001820830298616169,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0,
+        "af_burden": 0.0,
+        "causes": [
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "213",
         "beats": 3249,
-        "accuracy": 0.8938134810710988,
+        "accuracy": 0.899661434287473,
+        "pred_F_fraction": 0.09110495537088335,
+        "unstable": 0.1103515625,
+        "early": 0.013542628501077255,
         "consistency": 0.9813986420631409,
-        "pred_F_fraction": 0.0935672514619883,
+        "patterns": 1,
         "true_S_burden": 0.008618036318867343,
-        "pred_S_burden": 0.011695906432748537,
+        "pred_S_burden": 0.010156971375807941,
         "true_V_burden": 0.06771314250538628,
-        "pred_V_burden": 0.03447214527546937,
-        "af_burden": 0.0
+        "pred_V_burden": 0.03785780240073869,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "214",
         "beats": 2258,
-        "accuracy": 0.9007971656333038,
+        "accuracy": 0.9074402125775022,
+        "pred_F_fraction": 0.0562444641275465,
+        "unstable": 0.06998158379373849,
+        "early": 0.11558901682905226,
         "consistency": 0.9927381277084351,
-        "pred_F_fraction": 0.06200177147918512,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.03720106288751107,
+        "pred_S_burden": 0.03631532329495128,
         "true_V_burden": 0.1133746678476528,
-        "pred_V_burden": 0.07838795394154119,
-        "af_burden": 0.0
+        "pred_V_burden": 0.07794508414526129,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "219",
         "beats": 2152,
-        "accuracy": 0.9052044609665427,
+        "accuracy": 0.9191449814126395,
+        "pred_F_fraction": 0.004646840148698885,
+        "unstable": 0.005512679162072767,
+        "early": 0.23327137546468402,
         "consistency": 0.9924024343490601,
-        "pred_F_fraction": 0.007899628252788104,
+        "patterns": 1,
         "true_S_burden": 0.0032527881040892194,
-        "pred_S_burden": 0.07992565055762081,
+        "pred_S_burden": 0.07016728624535316,
         "true_V_burden": 0.02973977695167286,
-        "pred_V_burden": 0.016263940520446097,
-        "af_burden": 0.7788104089219331
+        "pred_V_burden": 0.019052044609665426,
+        "af_burden": 0.7788104089219331,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "221",
         "beats": 2425,
-        "accuracy": 0.8734020618556702,
+        "accuracy": 0.8997938144329897,
+        "pred_F_fraction": 0.08824742268041237,
+        "unstable": 0.17703349282296652,
+        "early": 0.2622680412371134,
         "consistency": 0.9890149235725403,
-        "pred_F_fraction": 0.0977319587628866,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.00577319587628866,
+        "pred_S_burden": 0.00288659793814433,
         "true_V_burden": 0.16329896907216496,
-        "pred_V_burden": 0.13731958762886598,
-        "af_burden": 0.8981443298969072
+        "pred_V_burden": 0.15175257731958763,
+        "af_burden": 0.8981443298969072,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "222",
         "beats": 2481,
-        "accuracy": 0.7617896009673518,
-        "consistency": 0.8389650583267212,
+        "accuracy": 0.7960499798468359,
         "pred_F_fraction": 0.0,
+        "unstable": 0.6111111111111112,
+        "early": 0.24143490528012898,
+        "consistency": 0.8389650583267212,
+        "patterns": 1,
         "true_S_burden": 0.08424022571543732,
-        "pred_S_burden": 0.23538895606610238,
+        "pred_S_burden": 0.2011285771866183,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.007255139056831923,
-        "af_burden": 0.4324869004433696
+        "pred_V_burden": 0.007658202337767029,
+        "af_burden": 0.4324869004433696,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "228",
         "beats": 2051,
-        "accuracy": 0.8464163822525598,
+        "accuracy": 0.8980984885421746,
+        "pred_F_fraction": 0.060945880058508047,
+        "unstable": 0.15043478260869564,
+        "early": 0.17942467089224767,
         "consistency": 0.9439411759376526,
-        "pred_F_fraction": 0.0848366650414432,
+        "patterns": 1,
         "true_S_burden": 0.0014627011214041932,
-        "pred_S_burden": 0.06484641638225255,
+        "pred_S_burden": 0.036567528035104824,
         "true_V_burden": 0.1764992686494393,
-        "pred_V_burden": 0.18088737201365188,
-        "af_burden": 0.0
+        "pred_V_burden": 0.181862506094588,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "231",
         "beats": 1569,
-        "accuracy": 0.882727852135118,
-        "consistency": 0.9820624589920044,
+        "accuracy": 0.9158699808795411,
         "pred_F_fraction": 0.0,
+        "unstable": 0.002067539627842867,
+        "early": 0.022307202039515615,
+        "consistency": 0.9820624589920044,
+        "patterns": 2,
         "true_S_burden": 0.0006373486297004461,
-        "pred_S_burden": 0.10197578075207138,
+        "pred_S_burden": 0.08349267049075844,
         "true_V_burden": 0.0012746972594008922,
-        "pred_V_burden": 0.015933715742511154,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0006373486297004461,
+        "af_burden": 0.0,
+        "causes": [
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "232",
         "beats": 1778,
-        "accuracy": 0.9386951631046119,
-        "consistency": 0.9832227230072021,
+        "accuracy": 0.8830146231721034,
         "pred_F_fraction": 0.0,
+        "unstable": 0.03553299492385787,
+        "early": 0.6147356580427447,
+        "consistency": 0.9832227230072021,
+        "patterns": 1,
         "true_S_burden": 0.7767154105736783,
-        "pred_S_burden": 0.7165354330708661,
+        "pred_S_burden": 0.6608548931383577,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0022497187851518562,
-        "af_burden": 0.0005624296962879641
+        "af_burden": 0.0005624296962879641,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "233",
         "beats": 3077,
-        "accuracy": 0.8027299317517063,
+        "accuracy": 0.8287292817679558,
+        "pred_F_fraction": 0.1550211244718882,
+        "unstable": 0.3493975903614458,
+        "early": 0.23399415014624633,
         "consistency": 0.950941264629364,
-        "pred_F_fraction": 0.17094572635684108,
+        "patterns": 1,
         "true_S_burden": 0.0022749431264218393,
-        "pred_S_burden": 0.027299317517062074,
+        "pred_S_burden": 0.017549561260968474,
         "true_V_burden": 0.26974325641858954,
-        "pred_V_burden": 0.23529411764705882,
-        "af_burden": 0.0
+        "pred_V_burden": 0.24699382515437113,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "234",
         "beats": 2751,
-        "accuracy": 0.990185387131952,
-        "consistency": 0.9956119656562805,
+        "accuracy": 0.9905488913122501,
         "pred_F_fraction": 0.0,
+        "unstable": 0.009187798603454611,
+        "early": 0.003271537622682661,
+        "consistency": 0.9956119656562805,
+        "patterns": 1,
         "true_S_burden": 0.01817520901490367,
-        "pred_S_burden": 0.010178117048346057,
+        "pred_S_burden": 0.009814612868047983,
         "true_V_burden": 0.0010905125408942203,
         "pred_V_burden": 0.0014540167211922936,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       }
     ]
   },
   "SVDB": {
     "fusion_gate": {
       "before": {
-        "accuracy": 0.6995,
-        "macro_f1": 0.5066,
+        "accuracy": 0.7663,
+        "macro_f1": 0.5252,
         "F": {
           "support": 23,
           "sensitivity": 0.4783,
-          "ppv": 0.0003,
-          "f1": 0.0005
+          "ppv": 0.0004,
+          "f1": 0.0007
         }
       },
       "after": {
-        "accuracy": 0.7235,
-        "macro_f1": 0.5096,
+        "accuracy": 0.7897,
+        "macro_f1": 0.5282,
         "F": {
           "support": 23,
           "sensitivity": 0.0435,
@@ -440,2018 +648,3153 @@
         }
       },
       "false_F": [
-        42572,
-        37762
+        29712,
+        25098
       ]
     },
-    "reliability": {
-      "recordings": 78,
-      "flagged": 50,
-      "failing": 50,
-      "failing_flagged": 45,
+    "f_scaling": {
+      "macro_f1": 0.5413,
+      "F": {
+        "support": 23,
+        "sensitivity": 0.0,
+        "ppv": 0.0,
+        "f1": 0.0
+      }
+    },
+    "warning": {
+      "flagged": 51,
+      "failing": 47,
+      "failing_flagged": 46,
       "false_flags": 5,
-      "accuracy_flagged": 0.6199713391348902,
-      "accuracy_trusted": 0.9410309902755812,
-      "auroc": 0.9385714285714286
+      "accuracy_flagged": 0.7119872467825343,
+      "accuracy_trusted": 0.9689517864829962,
+      "auroc": 0.9437199725463281
+    },
+    "consistency_flag": {
+      "flagged": 50,
+      "failing": 47,
+      "failing_flagged": 42,
+      "false_flags": 8,
+      "accuracy_flagged": 0.7159372022832622,
+      "accuracy_trusted": 0.9447155018674922,
+      "auroc": 0.9169526424159232
+    },
+    "groups": {
+      "no warning, no early beats": {
+        "recordings": 19,
+        "accuracy": 0.9818531169940222
+      },
+      "frequent early beats only": {
+        "recordings": 8,
+        "accuracy": 0.9425054704595186
+      },
+      "unstable beats": {
+        "recordings": 51,
+        "accuracy": 0.7119872467825343
+      }
+    },
+    "several_patterns": {
+      "recordings": 17,
+      "accuracy": 0.7436112381242697
     },
     "burden_category_agreement": {
       "V": {
-        "all": 0.6153846153846154,
-        "trusted": 0.75,
-        "flagged": 0.54
+        "all": 0.6538461538461539,
+        "trusted": 0.6296296296296297,
+        "warned": 0.6666666666666666
       },
       "S": {
-        "all": 0.7051282051282052,
-        "trusted": 0.6785714285714286,
-        "flagged": 0.72
+        "all": 0.7307692307692307,
+        "trusted": 0.7407407407407407,
+        "warned": 0.7254901960784313
       }
     },
     "recordings": [
       {
         "record": "0",
         "beats": 1881,
-        "accuracy": 0.9096225412014886,
+        "accuracy": 0.9255715045188729,
+        "pred_F_fraction": 0.050505050505050504,
+        "unstable": 0.04522613065326633,
+        "early": 0.03668261562998405,
         "consistency": 0.9710471034049988,
-        "pred_F_fraction": 0.05369484316852738,
+        "patterns": 1,
         "true_S_burden": 0.01594896331738437,
-        "pred_S_burden": 0.045188729399255716,
+        "pred_S_burden": 0.031366294524189264,
         "true_V_burden": 0.003189792663476874,
         "pred_V_burden": 0.011164274322169059,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "1",
         "beats": 2507,
-        "accuracy": 0.5767850019944156,
+        "accuracy": 0.6848823294774631,
+        "pred_F_fraction": 0.30075787794176306,
+        "unstable": 0.2537840565085772,
+        "early": 0.057040287195851615,
         "consistency": 0.9238770008087158,
-        "pred_F_fraction": 0.3932987634623055,
+        "patterns": 1,
         "true_S_burden": 0.02632628639808536,
-        "pred_S_burden": 0.049062624650977264,
+        "pred_S_burden": 0.03310729956122856,
         "true_V_burden": 0.10690067810131632,
-        "pred_V_burden": 0.10610291184682888,
-        "af_burden": 0.03988831272437176
+        "pred_V_burden": 0.1065017949740726,
+        "af_burden": 0.03988831272437176,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "10",
         "beats": 1901,
-        "accuracy": 0.766964755391899,
-        "consistency": 0.9632458686828613,
+        "accuracy": 0.7690689110994213,
         "pred_F_fraction": 0.22619673855865335,
+        "unstable": 0.12742857142857142,
+        "early": 0.03314045239347712,
+        "consistency": 0.9632458686828613,
+        "patterns": 1,
         "true_S_burden": 0.004208311415044713,
-        "pred_S_burden": 0.007364544976328248,
+        "pred_S_burden": 0.004734350341925302,
         "true_V_burden": 0.029458179905312992,
-        "pred_V_burden": 0.03156233561283535,
-        "af_burden": 0.0
+        "pred_V_burden": 0.03208837453971594,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "11",
         "beats": 1434,
-        "accuracy": 0.9456066945606695,
-        "consistency": 0.9841285347938538,
+        "accuracy": 0.9490934449093444,
         "pred_F_fraction": 0.0,
+        "unstable": 0.07857142857142857,
+        "early": 0.03695955369595537,
+        "consistency": 0.9841285347938538,
+        "patterns": 1,
         "true_S_burden": 0.000697350069735007,
-        "pred_S_burden": 0.05090655509065551,
+        "pred_S_burden": 0.04741980474198047,
         "true_V_burden": 0.019525801952580194,
-        "pred_V_burden": 0.011157601115760111,
-        "af_burden": 0.0
+        "pred_V_burden": 0.010460251046025104,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "12",
         "beats": 1840,
-        "accuracy": 0.9603260869565218,
-        "consistency": 0.982235312461853,
+        "accuracy": 0.9625,
         "pred_F_fraction": 0.0,
+        "unstable": 0.04216867469879518,
+        "early": 0.04565217391304348,
+        "consistency": 0.982235312461853,
+        "patterns": 1,
         "true_S_burden": 0.007608695652173913,
-        "pred_S_burden": 0.043478260869565216,
+        "pred_S_burden": 0.042934782608695654,
         "true_V_burden": 0.03804347826086957,
-        "pred_V_burden": 0.010326086956521738,
-        "af_burden": 0.0
+        "pred_V_burden": 0.008695652173913044,
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "13",
         "beats": 2349,
         "accuracy": 1.0,
-        "consistency": 0.9897195100784302,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0030410542321338066,
+        "early": 0.0800340570455513,
+        "consistency": 0.9897195100784302,
+        "patterns": 1,
         "true_S_burden": 0.07875691783737761,
         "pred_S_burden": 0.07875691783737761,
         "true_V_burden": 0.001277139208173691,
         "pred_V_burden": 0.001277139208173691,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "14",
         "beats": 3130,
-        "accuracy": 0.7789137380191693,
-        "consistency": 0.953826367855072,
-        "pred_F_fraction": 0.17955271565495207,
+        "accuracy": 0.810223642172524,
+        "pred_F_fraction": 0.1511182108626198,
+        "unstable": 0.16204217536071033,
+        "early": 0.15782747603833866,
+        "consistency": 0.9538263082504272,
+        "patterns": 1,
         "true_S_burden": 0.19616613418530351,
-        "pred_S_burden": 0.1964856230031949,
+        "pred_S_burden": 0.1926517571884984,
         "true_V_burden": 0.011501597444089457,
         "pred_V_burden": 0.012779552715654952,
-        "af_burden": 0.05591054313099041
+        "af_burden": 0.05591054313099041,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "15",
         "beats": 2332,
-        "accuracy": 0.7169811320754716,
-        "consistency": 0.9775552749633789,
+        "accuracy": 0.7208404802744426,
         "pred_F_fraction": 0.0,
+        "unstable": 0.06792622582096267,
+        "early": 0.002572898799313894,
+        "consistency": 0.9775552749633789,
+        "patterns": 1,
         "true_S_burden": 0.28216123499142365,
-        "pred_S_burden": 0.003430531732418525,
+        "pred_S_burden": 0.007289879931389366,
         "true_V_burden": 0.0004288164665523156,
-        "pred_V_burden": 0.0047169811320754715,
-        "af_burden": 0.0
+        "pred_V_burden": 0.007718696397941681,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "16",
         "beats": 2859,
-        "accuracy": 0.9741168240643582,
-        "consistency": 0.9617728590965271,
+        "accuracy": 0.9730675061210213,
         "pred_F_fraction": 0.0,
+        "unstable": 0.041353383458646614,
+        "early": 0.09338929695697797,
+        "consistency": 0.9617729187011719,
+        "patterns": 1,
         "true_S_burden": 0.1336131514515565,
-        "pred_S_burden": 0.12556838055264077,
+        "pred_S_burden": 0.12137110877929345,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.0003497726477789437,
-        "af_burden": 0.0003497726477789437
+        "pred_V_burden": 0.0006995452955578874,
+        "af_burden": 0.0003497726477789437,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "17",
         "beats": 2417,
-        "accuracy": 0.8183698800165494,
-        "consistency": 0.9620653986930847,
-        "pred_F_fraction": 0.1580471659081506,
+        "accuracy": 0.8158874637980968,
+        "pred_F_fraction": 0.15928837401737692,
+        "unstable": 0.0802407221664995,
+        "early": 0.08895324782788581,
+        "consistency": 0.9620654582977295,
+        "patterns": 1,
         "true_S_burden": 0.08109226313611916,
-        "pred_S_burden": 0.08812577575506826,
+        "pred_S_burden": 0.08978071990070335,
         "true_V_burden": 0.0028961522548613984,
         "pred_V_burden": 0.01075713694662805,
-        "af_burden": 0.019031857674803476
+        "af_burden": 0.019031857674803476,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "18",
         "beats": 2796,
         "accuracy": 0.9992846924177397,
-        "consistency": 0.9930245876312256,
         "pred_F_fraction": 0.0,
+        "unstable": 0.05887064477372848,
+        "early": 0.05257510729613734,
+        "consistency": 0.9930247068405151,
+        "patterns": 1,
         "true_S_burden": 0.05185979971387697,
         "pred_S_burden": 0.05257510729613734,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "19",
         "beats": 2659,
-        "accuracy": 0.5810455058292591,
-        "consistency": 0.9410513043403625,
-        "pred_F_fraction": 0.27077848815344113,
+        "accuracy": 0.5893192929672809,
+        "pred_F_fraction": 0.26776983828506956,
+        "unstable": 0.2581699346405229,
+        "early": 0.07897705904475366,
+        "consistency": 0.9410512447357178,
+        "patterns": 1,
         "true_S_burden": 0.03008649868371568,
-        "pred_S_burden": 0.1462955998495675,
+        "pred_S_burden": 0.1414065438134637,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.024069198946972545,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0236931177134261,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "2",
         "beats": 1669,
-        "accuracy": 0.7591372079089275,
+        "accuracy": 0.9059316956261234,
+        "pred_F_fraction": 0.08807669263031756,
+        "unstable": 0.08481262327416174,
+        "early": 0.015578190533253445,
         "consistency": 0.9594216346740723,
-        "pred_F_fraction": 0.22588376273217495,
+        "patterns": 2,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.014379868184541641,
+        "pred_S_burden": 0.005392450569203115,
         "true_V_burden": 0.050928699820251645,
-        "pred_V_burden": 0.05032953864589575,
-        "af_burden": 0.0
+        "pred_V_burden": 0.029958058717795086,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "20",
         "beats": 1860,
-        "accuracy": 0.9983870967741936,
-        "consistency": 0.9951348304748535,
+        "accuracy": 0.9989247311827957,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0016492578339747114,
+        "early": 0.01021505376344086,
+        "consistency": 0.9951348304748535,
+        "patterns": 1,
         "true_S_burden": 0.00967741935483871,
-        "pred_S_burden": 0.01129032258064516,
+        "pred_S_burden": 0.010752688172043012,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "21",
         "beats": 1911,
-        "accuracy": 0.5484039769754055,
+        "accuracy": 0.7749869178440607,
+        "pred_F_fraction": 0.16117216117216118,
+        "unstable": 0.15269886363636365,
+        "early": 0.08110936682365254,
         "consistency": 0.9255431890487671,
-        "pred_F_fraction": 0.3715332286760858,
+        "patterns": 2,
         "true_S_burden": 0.07849293563579278,
-        "pred_S_burden": 0.0282574568288854,
+        "pred_S_burden": 0.037153322867608585,
         "true_V_burden": 0.0031397174254317113,
-        "pred_V_burden": 0.07482993197278912,
-        "af_burden": 0.0
+        "pred_V_burden": 0.05913134484563056,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "22",
         "beats": 1965,
-        "accuracy": 0.610178117048346,
+        "accuracy": 0.8015267175572519,
+        "pred_F_fraction": 0.12213740458015267,
+        "unstable": 0.2036405005688282,
+        "early": 0.037659033078880404,
         "consistency": 0.9363474249839783,
-        "pred_F_fraction": 0.2916030534351145,
+        "patterns": 2,
         "true_S_burden": 0.04071246819338423,
-        "pred_S_burden": 0.05547073791348601,
+        "pred_S_burden": 0.05292620865139949,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.0737913486005089,
-        "af_burden": 0.0
+        "pred_V_burden": 0.056997455470737916,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "23",
         "beats": 2384,
-        "accuracy": 0.9328859060402684,
-        "consistency": 0.952033281326294,
+        "accuracy": 0.9526006711409396,
         "pred_F_fraction": 0.0,
+        "unstable": 0.2574823943661972,
+        "early": 0.00587248322147651,
+        "consistency": 0.952033281326294,
+        "patterns": 1,
         "true_S_burden": 0.018456375838926176,
-        "pred_S_burden": 0.016359060402684564,
+        "pred_S_burden": 0.015100671140939598,
         "true_V_burden": 0.00041946308724832214,
-        "pred_V_burden": 0.06208053691275168,
-        "af_burden": 0.0
+        "pred_V_burden": 0.04278523489932886,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "24",
         "beats": 1849,
-        "accuracy": 0.8339643050297458,
-        "consistency": 0.9874177575111389,
+        "accuracy": 0.8409951325040562,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0019880715705765406,
+        "early": 0.2114656571119524,
+        "consistency": 0.9874178171157837,
+        "patterns": 1,
         "true_S_burden": 0.057328285559762035,
-        "pred_S_burden": 0.20876149269875607,
+        "pred_S_burden": 0.20064899945916712,
         "true_V_burden": 0.13737155219037317,
         "pred_V_burden": 0.0027041644131963224,
-        "af_burden": 0.06165494862087615
+        "af_burden": 0.06165494862087615,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "25",
         "beats": 2557,
-        "accuracy": 0.5389127884239343,
-        "consistency": 0.8971468210220337,
-        "pred_F_fraction": 0.3676183026984748,
+        "accuracy": 0.7387563551036371,
+        "pred_F_fraction": 0.17168556902620258,
+        "unstable": 0.14573396926338103,
+        "early": 0.10598357450136879,
+        "consistency": 0.8971468806266785,
+        "patterns": 2,
         "true_S_burden": 0.04067266327727806,
-        "pred_S_burden": 0.0778255768478686,
+        "pred_S_burden": 0.08330074305827141,
         "true_V_burden": 0.023856081345326553,
-        "pred_V_burden": 0.04380132968322253,
-        "af_burden": 0.11615174032068831
+        "pred_V_burden": 0.03754399687133359,
+        "af_burden": 0.11615174032068831,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "26",
         "beats": 2706,
-        "accuracy": 0.3843311160384331,
+        "accuracy": 0.7368810051736882,
+        "pred_F_fraction": 0.22985957132298596,
+        "unstable": 0.24020178502134265,
+        "early": 0.02254249815225425,
         "consistency": 0.8400737047195435,
-        "pred_F_fraction": 0.5299334811529933,
+        "patterns": 2,
         "true_S_burden": 0.007760532150776054,
-        "pred_S_burden": 0.014042867701404288,
+        "pred_S_burden": 0.022912047302291204,
         "true_V_burden": 0.014042867701404288,
-        "pred_V_burden": 0.08130081300813008,
-        "af_burden": 0.0033259423503325942
+        "pred_V_burden": 0.02402069475240207,
+        "af_burden": 0.0033259423503325942,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "27",
         "beats": 1707,
-        "accuracy": 0.974223784417106,
-        "consistency": 0.9758548140525818,
+        "accuracy": 0.981253661394259,
         "pred_F_fraction": 0.0,
+        "unstable": 0.01603206412825651,
+        "early": 0.03983596953719976,
+        "consistency": 0.9758548736572266,
+        "patterns": 1,
         "true_S_burden": 0.03456356180433509,
-        "pred_S_burden": 0.050966608084358524,
+        "pred_S_burden": 0.04510837727006444,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.0023432923257176333,
-        "af_burden": 0.012302284710017574
+        "pred_V_burden": 0.0017574692442882249,
+        "af_burden": 0.012302284710017574,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "28",
         "beats": 2883,
-        "accuracy": 0.980922650017343,
-        "consistency": 0.9910387992858887,
+        "accuracy": 0.9843912591050988,
         "pred_F_fraction": 0.0,
+        "unstable": 0.022535211267605635,
+        "early": 0.045091918140825527,
+        "consistency": 0.9910387992858887,
+        "patterns": 1,
         "true_S_burden": 0.009365244536940686,
-        "pred_S_burden": 0.014915019077349982,
+        "pred_S_burden": 0.01040582726326743,
         "true_V_burden": 0.01040582726326743,
-        "pred_V_burden": 0.00346860908775581,
-        "af_burden": 0.22372528616024975
+        "pred_V_burden": 0.003815469996531391,
+        "af_burden": 0.22372528616024975,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "29",
         "beats": 1679,
-        "accuracy": 0.6414532459797498,
-        "consistency": 0.9402316212654114,
-        "pred_F_fraction": 0.3412745681953544,
+        "accuracy": 0.9452054794520548,
+        "pred_F_fraction": 0.03692674210839786,
+        "unstable": 0.026171637248934874,
+        "early": 0.008933889219773675,
+        "consistency": 0.9402316808700562,
+        "patterns": 2,
         "true_S_burden": 0.011911852293031567,
-        "pred_S_burden": 0.012507444907683145,
+        "pred_S_burden": 0.016081000595592615,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.013103037522334724,
-        "af_burden": 0.0
+        "pred_V_burden": 0.01072066706372841,
+        "af_burden": 0.0,
+        "causes": [
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "3",
         "beats": 2066,
-        "accuracy": 0.8223620522749274,
+        "accuracy": 0.8301064859632139,
+        "pred_F_fraction": 0.1602129719264279,
+        "unstable": 0.10113636363636364,
+        "early": 0.06727976766698936,
         "consistency": 0.9768180847167969,
-        "pred_F_fraction": 0.16360116166505323,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.012584704743465635,
+        "pred_S_burden": 0.008712487899322363,
         "true_V_burden": 0.06921587608906099,
-        "pred_V_burden": 0.07066795740561471,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0701839303000968,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "30",
         "beats": 1760,
-        "accuracy": 0.6232954545454545,
-        "consistency": 0.9409271478652954,
-        "pred_F_fraction": 0.2755681818181818,
+        "accuracy": 0.7886363636363637,
+        "pred_F_fraction": 0.20852272727272728,
+        "unstable": 0.07906388361796332,
+        "early": 0.045454545454545456,
+        "consistency": 0.940927267074585,
+        "patterns": 2,
         "true_S_burden": 0.028977272727272727,
-        "pred_S_burden": 0.12954545454545455,
+        "pred_S_burden": 0.030113636363636363,
         "true_V_burden": 0.025,
-        "pred_V_burden": 0.023295454545454546,
-        "af_burden": 0.0
+        "pred_V_burden": 0.024431818181818183,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "31",
         "beats": 4257,
-        "accuracy": 0.19661733615221988,
+        "accuracy": 0.49213060840967815,
+        "pred_F_fraction": 0.2027249236551562,
+        "unstable": 0.7762148337595908,
+        "early": 0.02983321587972751,
         "consistency": 0.6432704329490662,
-        "pred_F_fraction": 0.6572703782006107,
+        "patterns": 2,
         "true_S_burden": 0.007047216349541931,
-        "pred_S_burden": 0.13107822410147993,
+        "pred_S_burden": 0.28071411792342027,
         "true_V_burden": 0.0002349072116513977,
-        "pred_V_burden": 0.017618040873854827,
-        "af_burden": 0.005872680291284942
+        "pred_V_burden": 0.02983321587972751,
+        "af_burden": 0.005872680291284942,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "32",
         "beats": 2138,
-        "accuracy": 0.578110383536015,
+        "accuracy": 0.8175865294667914,
+        "pred_F_fraction": 0.13283442469597756,
+        "unstable": 0.13580901856763924,
+        "early": 0.05425631431244153,
         "consistency": 0.9328205585479736,
-        "pred_F_fraction": 0.29420018709073903,
+        "patterns": 3,
         "true_S_burden": 0.03461178671655753,
-        "pred_S_burden": 0.011693171188026192,
+        "pred_S_burden": 0.015902712815715623,
         "true_V_burden": 0.002806361085126286,
-        "pred_V_burden": 0.11739943872778298,
-        "af_burden": 0.09775491113189898
+        "pred_V_burden": 0.03320860617399439,
+        "af_burden": 0.09775491113189898,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "33",
         "beats": 1836,
-        "accuracy": 0.9705882352941176,
-        "consistency": 0.9822391271591187,
+        "accuracy": 0.9733115468409586,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0022346368715083797,
+        "early": 0.007625272331154684,
+        "consistency": 0.9822391271591187,
+        "patterns": 1,
         "true_S_burden": 0.003812636165577342,
-        "pred_S_burden": 0.026688453159041396,
+        "pred_S_burden": 0.02287581699346405,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0027233115468409588,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "34",
         "beats": 2626,
-        "accuracy": 0.7916984006092918,
-        "consistency": 0.9473450183868408,
-        "pred_F_fraction": 0.16945925361766945,
+        "accuracy": 0.8095963442498096,
+        "pred_F_fraction": 0.15346534653465346,
+        "unstable": 0.18432333129210043,
+        "early": 0.1766945925361767,
+        "consistency": 0.9473450779914856,
+        "patterns": 1,
         "true_S_burden": 0.012185833968012186,
-        "pred_S_burden": 0.03541507996953541,
+        "pred_S_burden": 0.03351104341203351,
         "true_V_burden": 0.16260472201066262,
-        "pred_V_burden": 0.16565118050266564,
-        "af_burden": 0.020944402132520943
+        "pred_V_burden": 0.16641279512566642,
+        "af_burden": 0.020944402132520943,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "35",
         "beats": 2662,
-        "accuracy": 0.13786626596543952,
-        "consistency": 0.7063284516334534,
-        "pred_F_fraction": 0.7445529676934636,
+        "accuracy": 0.13636363636363635,
+        "pred_F_fraction": 0.7381667918858001,
+        "unstable": 0.6160520607375272,
+        "early": 0.12734785875281743,
+        "consistency": 0.7063283920288086,
+        "patterns": 1,
         "true_S_burden": 0.12058602554470323,
-        "pred_S_burden": 0.052967693463561234,
+        "pred_S_burden": 0.05146506386175808,
         "true_V_burden": 0.0033809166040570998,
-        "pred_V_burden": 0.10743801652892562,
-        "af_burden": 0.0
+        "pred_V_burden": 0.11570247933884298,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "36",
         "beats": 2217,
-        "accuracy": 0.9057284618854308,
-        "consistency": 0.9857230186462402,
-        "pred_F_fraction": 0.05006765899864682,
+        "accuracy": 0.9097880018042399,
+        "pred_F_fraction": 0.04871447902571042,
+        "unstable": 0.019522776572668113,
+        "early": 0.06630581867388363,
+        "consistency": 0.9857229590415955,
+        "patterns": 1,
         "true_S_burden": 0.02165087956698241,
-        "pred_S_burden": 0.06134415877311682,
+        "pred_S_burden": 0.05863779882724402,
         "true_V_burden": 0.02886783942264321,
-        "pred_V_burden": 0.02435723951285521,
-        "af_burden": 0.004961659900766802
+        "pred_V_burden": 0.02571041948579161,
+        "af_burden": 0.004961659900766802,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "37",
         "beats": 2726,
-        "accuracy": 0.681951577402788,
+        "accuracy": 0.7157006603081438,
+        "pred_F_fraction": 0.1936903888481291,
+        "unstable": 0.3578847969782814,
+        "early": 0.24981658107116655,
         "consistency": 0.9086600542068481,
-        "pred_F_fraction": 0.2252384446074835,
+        "patterns": 1,
         "true_S_burden": 0.16874541452677916,
-        "pred_S_burden": 0.14893617021276595,
+        "pred_S_burden": 0.14159941305942772,
         "true_V_burden": 0.17534849596478358,
-        "pred_V_burden": 0.14123257520176083,
-        "af_burden": 0.16874541452677916
+        "pred_V_burden": 0.14783565663976522,
+        "af_burden": 0.16874541452677916,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "38",
         "beats": 2537,
-        "accuracy": 0.5995270003941663,
-        "consistency": 0.9201858043670654,
-        "pred_F_fraction": 0.32282223098147417,
+        "accuracy": 0.5963736696886086,
+        "pred_F_fraction": 0.3251872290106425,
+        "unstable": 0.4057347670250896,
+        "early": 0.18092234923137565,
+        "consistency": 0.9201859831809998,
+        "patterns": 1,
         "true_S_burden": 0.08947575877020103,
-        "pred_S_burden": 0.06030744974379188,
+        "pred_S_burden": 0.06424911312573907,
         "true_V_burden": 0.10878990934174222,
-        "pred_V_burden": 0.1367757193535672,
-        "af_burden": 0.1604256996452503
+        "pred_V_burden": 0.13874655104454078,
+        "af_burden": 0.1604256996452503,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "39",
         "beats": 2850,
-        "accuracy": 0.39052631578947367,
+        "accuracy": 0.8898245614035087,
+        "pred_F_fraction": 0.10140350877192983,
+        "unstable": 0.06652283351312477,
+        "early": 0.011929824561403509,
         "consistency": 0.9050976037979126,
-        "pred_F_fraction": 0.5929824561403508,
+        "patterns": 3,
         "true_S_burden": 0.004210526315789474,
-        "pred_S_burden": 0.0038596491228070177,
+        "pred_S_burden": 0.0035087719298245615,
         "true_V_burden": 0.009824561403508772,
-        "pred_V_burden": 0.025614035087719297,
-        "af_burden": 0.0
+        "pred_V_burden": 0.017543859649122806,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "4",
         "beats": 2832,
-        "accuracy": 0.711864406779661,
-        "consistency": 0.9342102408409119,
-        "pred_F_fraction": 0.24929378531073446,
+        "accuracy": 0.7079802259887006,
+        "pred_F_fraction": 0.2535310734463277,
+        "unstable": 0.23952513966480446,
+        "early": 0.1716101694915254,
+        "consistency": 0.9342103004455566,
+        "patterns": 1,
         "true_S_burden": 0.0,
         "pred_S_burden": 0.009533898305084746,
         "true_V_burden": 0.06391242937853107,
-        "pred_V_burden": 0.08509887005649718,
-        "af_burden": 0.9286723163841808
+        "pred_V_burden": 0.0847457627118644,
+        "af_burden": 0.9286723163841808,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "40",
         "beats": 2582,
-        "accuracy": 0.8121611154144074,
+        "accuracy": 0.8384972889233152,
+        "pred_F_fraction": 0.12858249419054996,
+        "unstable": 0.11299153807864609,
+        "early": 0.08520526723470179,
         "consistency": 0.9788421392440796,
-        "pred_F_fraction": 0.15027110766847404,
+        "patterns": 1,
         "true_S_burden": 0.01471727343144849,
-        "pred_S_burden": 0.04918667699457785,
+        "pred_S_burden": 0.044151820294345466,
         "true_V_burden": 0.055770720371804805,
-        "pred_V_burden": 0.04298993028659954,
-        "af_burden": 0.0
+        "pred_V_burden": 0.05151045701006971,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "41",
         "beats": 2178,
-        "accuracy": 0.9949494949494949,
-        "consistency": 0.9797163009643555,
+        "accuracy": 0.9954086317722681,
         "pred_F_fraction": 0.0,
+        "unstable": 0.044423877834335955,
+        "early": 0.004591368227731864,
+        "consistency": 0.9797163605690002,
+        "patterns": 1,
         "true_S_burden": 0.0036730945821854912,
         "pred_S_burden": 0.004132231404958678,
         "true_V_burden": 0.0013774104683195593,
-        "pred_V_burden": 0.005968778696051423,
-        "af_burden": 0.0
+        "pred_V_burden": 0.005509641873278237,
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "42",
         "beats": 3540,
-        "accuracy": 0.6977401129943502,
+        "accuracy": 0.7703389830508475,
+        "pred_F_fraction": 0.09067796610169492,
+        "unstable": 0.29732225300092335,
+        "early": 0.1211864406779661,
         "consistency": 0.9528988599777222,
-        "pred_F_fraction": 0.12966101694915255,
+        "patterns": 1,
         "true_S_burden": 0.019491525423728815,
-        "pred_S_burden": 0.18559322033898304,
+        "pred_S_burden": 0.15141242937853108,
         "true_V_burden": 0.1310734463276836,
-        "pred_V_burden": 0.10508474576271186,
-        "af_burden": 0.0
+        "pred_V_burden": 0.11045197740112994,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "43",
         "beats": 2416,
-        "accuracy": 0.3480960264900662,
-        "consistency": 0.5622303485870361,
-        "pred_F_fraction": 0.3580298013245033,
+        "accuracy": 0.4105960264900662,
+        "pred_F_fraction": 0.3514072847682119,
+        "unstable": 0.8990536277602523,
+        "early": 0.304635761589404,
+        "consistency": 0.5622304081916809,
+        "patterns": 1,
         "true_S_burden": 0.007036423841059603,
-        "pred_S_burden": 0.2947019867549669,
+        "pred_S_burden": 0.24006622516556292,
         "true_V_burden": 0.30091059602649006,
-        "pred_V_burden": 0.010347682119205299,
-        "af_burden": 0.0008278145695364238
+        "pred_V_burden": 0.06539735099337748,
+        "af_burden": 0.0008278145695364238,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "44",
         "beats": 2469,
-        "accuracy": 0.6277845281490482,
+        "accuracy": 0.6411502632644795,
+        "pred_F_fraction": 0.16160388821385177,
+        "unstable": 0.34361610968294776,
+        "early": 0.2345078979343864,
         "consistency": 0.950943112373352,
-        "pred_F_fraction": 0.17942486836776023,
+        "patterns": 1,
         "true_S_burden": 0.23045767517213447,
-        "pred_S_burden": 0.19522073714054272,
+        "pred_S_burden": 0.191575536654516,
         "true_V_burden": 0.010935601458080195,
-        "pred_V_burden": 0.159983799108951,
-        "af_burden": 0.0032401782098015392
+        "pred_V_burden": 0.1656541109761037,
+        "af_burden": 0.0032401782098015392,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "45",
         "beats": 2181,
-        "accuracy": 0.9871618523613022,
-        "consistency": 0.9857618808746338,
+        "accuracy": 0.9894543787253554,
         "pred_F_fraction": 0.0,
+        "unstable": 0.00303951367781155,
+        "early": 0.01925722145804677,
+        "consistency": 0.9857618808746338,
+        "patterns": 1,
         "true_S_burden": 0.01192113709307657,
-        "pred_S_burden": 0.02109124254928932,
+        "pred_S_burden": 0.01879871618523613,
         "true_V_burden": 0.01054562127464466,
-        "pred_V_burden": 0.009170105456212746,
-        "af_burden": 0.0
+        "pred_V_burden": 0.009628610729023384,
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "46",
         "beats": 3121,
-        "accuracy": 0.8468439602691445,
-        "consistency": 0.9715375304222107,
-        "pred_F_fraction": 0.1419416853572573,
+        "accuracy": 0.843960269144505,
+        "pred_F_fraction": 0.14386414610701698,
+        "unstable": 0.1855,
+        "early": 0.1637295738545338,
+        "consistency": 0.9715374708175659,
+        "patterns": 1,
         "true_S_burden": 0.10285165011214355,
-        "pred_S_burden": 0.11022108298622237,
+        "pred_S_burden": 0.11118231336110221,
         "true_V_burden": 0.07689842999038769,
         "pred_V_burden": 0.07113104774110862,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "47",
         "beats": 1893,
-        "accuracy": 0.08029582673005811,
+        "accuracy": 0.757527733755943,
+        "pred_F_fraction": 0.21817221341785525,
+        "unstable": 0.2064724919093851,
+        "early": 0.06391970417326995,
         "consistency": 0.8107894659042358,
-        "pred_F_fraction": 0.8948758584257792,
+        "patterns": 3,
         "true_S_burden": 0.010036978341257264,
-        "pred_S_burden": 0.014263074484944533,
+        "pred_S_burden": 0.011093502377179081,
         "true_V_burden": 0.06973058637083994,
-        "pred_V_burden": 0.0734284204965663,
-        "af_burden": 0.011093502377179081
+        "pred_V_burden": 0.08716323296354993,
+        "af_burden": 0.011093502377179081,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "48",
         "beats": 3153,
-        "accuracy": 0.3184268950206153,
-        "consistency": 0.8179045915603638,
-        "pred_F_fraction": 0.5810339359340311,
+        "accuracy": 0.3815413891531874,
+        "pred_F_fraction": 0.14494132572153504,
+        "unstable": 0.28041315990818666,
+        "early": 0.07833809070726293,
+        "consistency": 0.8179046511650085,
+        "patterns": 3,
         "true_S_burden": 0.576593720266413,
-        "pred_S_burden": 0.2147161433555344,
+        "pred_S_burden": 0.08785283856644466,
         "true_V_burden": 0.07421503330161751,
-        "pred_V_burden": 0.06279733587059944,
-        "af_burden": 0.018395179194418014
+        "pred_V_burden": 0.0624801776086267,
+        "af_burden": 0.018395179194418014,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "49",
         "beats": 2664,
-        "accuracy": 0.6580330330330331,
-        "consistency": 0.8727413415908813,
-        "pred_F_fraction": 0.2012012012012012,
+        "accuracy": 0.68506006006006,
+        "pred_F_fraction": 0.1828078078078078,
+        "unstable": 0.40036563071297987,
+        "early": 0.2875375375375375,
+        "consistency": 0.8727414011955261,
+        "patterns": 1,
         "true_S_burden": 0.06268768768768769,
-        "pred_S_burden": 0.13851351351351351,
+        "pred_S_burden": 0.13025525525525525,
         "true_V_burden": 0.1677927927927928,
-        "pred_V_burden": 0.15878378378378377,
-        "af_burden": 0.2012012012012012
+        "pred_V_burden": 0.16516516516516516,
+        "af_burden": 0.2012012012012012,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "5",
         "beats": 2296,
-        "accuracy": 0.7526132404181185,
+        "accuracy": 0.7547909407665505,
+        "pred_F_fraction": 0.1563588850174216,
+        "unstable": 0.12992831541218638,
+        "early": 0.17857142857142858,
         "consistency": 0.9550737142562866,
-        "pred_F_fraction": 0.15853658536585366,
+        "patterns": 1,
         "true_S_burden": 0.0,
         "pred_S_burden": 0.08667247386759581,
         "true_V_burden": 0.0901567944250871,
         "pred_V_burden": 0.09189895470383275,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "50",
         "beats": 2998,
-        "accuracy": 0.16777851901267513,
-        "consistency": 0.7209652066230774,
-        "pred_F_fraction": 0.5510340226817878,
+        "accuracy": 0.21514342895263508,
+        "pred_F_fraction": 0.5256837891927952,
+        "unstable": 0.7930622009569378,
+        "early": 0.17911941294196132,
+        "consistency": 0.7209651470184326,
+        "patterns": 1,
         "true_S_burden": 0.04536357571714476,
-        "pred_S_burden": 0.22715143428952636,
+        "pred_S_burden": 0.19713142094729819,
         "true_V_burden": 0.025016677785190126,
-        "pred_V_burden": 0.06604402935290193,
-        "af_burden": 0.25450300200133424
+        "pred_V_burden": 0.0733822548365577,
+        "af_burden": 0.25450300200133424,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "51",
         "beats": 3334,
-        "accuracy": 0.5980803839232154,
-        "consistency": 0.9511044025421143,
-        "pred_F_fraction": 0.13647270545890822,
+        "accuracy": 0.6406718656268746,
+        "pred_F_fraction": 0.10227954409118177,
+        "unstable": 0.2670886075949367,
+        "early": 0.21565686862627476,
+        "consistency": 0.9511045217514038,
+        "patterns": 1,
         "true_S_burden": 0.06808638272345531,
-        "pred_S_burden": 0.3083383323335333,
+        "pred_S_burden": 0.2969406118776245,
         "true_V_burden": 0.16646670665866828,
-        "pred_V_burden": 0.016796640671865627,
-        "af_burden": 0.02399520095980804
+        "pred_V_burden": 0.022195560887822437,
+        "af_burden": 0.02399520095980804,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "52",
         "beats": 2159,
-        "accuracy": 0.9444187123668365,
-        "consistency": 0.9865841269493103,
+        "accuracy": 0.9402501157943493,
         "pred_F_fraction": 0.0,
+        "unstable": 0.04859335038363171,
+        "early": 0.23899953682260305,
+        "consistency": 0.9865841865539551,
+        "patterns": 1,
         "true_S_burden": 0.2922649374710514,
-        "pred_S_burden": 0.2566002779064382,
+        "pred_S_burden": 0.25335803612783697,
         "true_V_burden": 0.010189902732746642,
         "pred_V_burden": 0.0004631773969430292,
-        "af_burden": 0.0018527095877721167
+        "af_burden": 0.0018527095877721167,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "53",
         "beats": 2676,
-        "accuracy": 0.6289237668161435,
+        "accuracy": 0.6580717488789237,
+        "pred_F_fraction": 0.2406576980568012,
+        "unstable": 0.2887700534759358,
+        "early": 0.2436472346786248,
         "consistency": 0.9248068332672119,
-        "pred_F_fraction": 0.2537369207772795,
+        "patterns": 1,
         "true_S_burden": 0.1696562032884903,
-        "pred_S_burden": 0.1591928251121076,
+        "pred_S_burden": 0.13863976083707025,
         "true_V_burden": 0.1633034379671151,
-        "pred_V_burden": 0.11920777279521674,
-        "af_burden": 0.02765321375186846
+        "pred_V_burden": 0.14237668161434977,
+        "af_burden": 0.02765321375186846,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "54",
         "beats": 1794,
-        "accuracy": 0.9715719063545151,
-        "consistency": 0.9605969786643982,
+        "accuracy": 0.9927536231884058,
         "pred_F_fraction": 0.0,
+        "unstable": 0.05913978494623656,
+        "early": 0.011705685618729096,
+        "consistency": 0.960597038269043,
+        "patterns": 2,
         "true_S_burden": 0.006688963210702341,
-        "pred_S_burden": 0.024526198439241916,
+        "pred_S_burden": 0.012263099219620958,
         "true_V_burden": 0.004459308807134894,
-        "pred_V_burden": 0.014492753623188406,
-        "af_burden": 0.0
+        "pred_V_burden": 0.006131549609810479,
+        "af_burden": 0.0,
+        "causes": [
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "55",
         "beats": 1979,
-        "accuracy": 0.953511874684184,
+        "accuracy": 0.9530065689742294,
+        "pred_F_fraction": 0.046488125315816066,
+        "unstable": 0.0027731558513588465,
+        "early": 0.04194037392622536,
         "consistency": 0.9802104830741882,
-        "pred_F_fraction": 0.04598281960586155,
+        "patterns": 1,
         "true_S_burden": 0.004547751389590703,
         "pred_S_burden": 0.00404244567963618,
         "true_V_burden": 0.03739262253663466,
         "pred_V_burden": 0.037897928246589184,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "56",
         "beats": 1682,
         "accuracy": 0.9774078478002378,
-        "consistency": 0.9931461811065674,
         "pred_F_fraction": 0.0,
+        "unstable": 0.01694915254237288,
+        "early": 0.006539833531510107,
+        "consistency": 0.9931461811065674,
+        "patterns": 1,
         "true_S_burden": 0.0089179548156956,
-        "pred_S_burden": 0.007134363852556481,
+        "pred_S_burden": 0.0077288941736028535,
         "true_V_burden": 0.015457788347205707,
         "pred_V_burden": 0.0047562425683709865,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "57",
         "beats": 2238,
-        "accuracy": 0.9968722073279714,
-        "consistency": 0.993438720703125,
+        "accuracy": 0.9973190348525469,
         "pred_F_fraction": 0.00044682752457551384,
+        "unstable": 0.0009332711152589828,
+        "early": 0.019213583556747096,
+        "consistency": 0.9934386610984802,
+        "patterns": 1,
         "true_S_burden": 0.004021447721179625,
-        "pred_S_burden": 0.00580875781948168,
+        "pred_S_burden": 0.0035746201966041107,
         "true_V_burden": 0.01831992850759607,
         "pred_V_burden": 0.01831992850759607,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "58",
         "beats": 2050,
-        "accuracy": 0.9897560975609756,
+        "accuracy": 0.9907317073170732,
+        "pred_F_fraction": 0.004390243902439025,
+        "unstable": 0.0005399568034557236,
+        "early": 0.04682926829268293,
         "consistency": 0.9922657012939453,
-        "pred_F_fraction": 0.005365853658536586,
+        "patterns": 1,
         "true_S_burden": 0.003902439024390244,
         "pred_S_burden": 0.005365853658536586,
         "true_V_burden": 0.04731707317073171,
         "pred_V_burden": 0.04097560975609756,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "59",
         "beats": 2139,
-        "accuracy": 0.5156615240766713,
+        "accuracy": 0.7498831229546518,
+        "pred_F_fraction": 0.15474520804114072,
+        "unstable": 0.2165871121718377,
+        "early": 0.06545114539504442,
         "consistency": 0.9238227605819702,
-        "pred_F_fraction": 0.3627863487611033,
+        "patterns": 2,
         "true_S_burden": 0.06311360448807854,
-        "pred_S_burden": 0.09817671809256662,
+        "pred_S_burden": 0.09350163627863488,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.06638616175783076,
-        "af_burden": 0.0
+        "pred_V_burden": 0.04862085086489014,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "6",
         "beats": 3021,
-        "accuracy": 0.9933796756041046,
-        "consistency": 0.9746768474578857,
+        "accuracy": 0.9904005296259517,
         "pred_F_fraction": 0.0,
+        "unstable": 0.15943526170798897,
+        "early": 0.014233697451175108,
+        "consistency": 0.974676787853241,
+        "patterns": 1,
         "true_S_burden": 0.013240648791790799,
-        "pred_S_burden": 0.010923535253227408,
+        "pred_S_burden": 0.011254551473022179,
         "true_V_burden": 0.009599470374048328,
-        "pred_V_burden": 0.013240648791790799,
-        "af_burden": 0.0
+        "pred_V_burden": 0.016219794769943726,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "60",
         "beats": 2036,
-        "accuracy": 0.44842829076620827,
-        "consistency": 0.8952082991600037,
-        "pred_F_fraction": 0.4204322200392927,
+        "accuracy": 0.6920432220039293,
+        "pred_F_fraction": 0.18467583497053044,
+        "unstable": 0.25390359809911744,
+        "early": 0.09577603143418467,
+        "consistency": 0.8952082395553589,
+        "patterns": 2,
         "true_S_burden": 0.0962671905697446,
-        "pred_S_burden": 0.05255402750491159,
+        "pred_S_burden": 0.05697445972495088,
         "true_V_burden": 0.0004911591355599214,
-        "pred_V_burden": 0.1144400785854617,
-        "af_burden": 0.0
+        "pred_V_burden": 0.10805500982318271,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "61",
         "beats": 1909,
-        "accuracy": 0.784704033525406,
+        "accuracy": 0.7972760607647983,
+        "pred_F_fraction": 0.18648507071765322,
+        "unstable": 0.12253641816623821,
+        "early": 0.15976951283394447,
         "consistency": 0.9477789402008057,
-        "pred_F_fraction": 0.19748559455212153,
+        "patterns": 1,
         "true_S_burden": 0.03352540597171294,
-        "pred_S_burden": 0.03404924044002095,
+        "pred_S_burden": 0.03247773703509691,
         "true_V_burden": 0.13410162388685176,
         "pred_V_burden": 0.14038763750654792,
-        "af_burden": 0.005762179151388162
+        "af_burden": 0.005762179151388162,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "62",
         "beats": 2060,
-        "accuracy": 0.8364077669902913,
-        "consistency": 0.9397112727165222,
-        "pred_F_fraction": 0.15436893203883495,
+        "accuracy": 0.8432038834951456,
+        "pred_F_fraction": 0.14757281553398058,
+        "unstable": 0.19158878504672897,
+        "early": 0.28446601941747574,
+        "consistency": 0.9397112131118774,
+        "patterns": 1,
         "true_S_burden": 0.02330097087378641,
         "pred_S_burden": 0.02378640776699029,
         "true_V_burden": 0.26310679611650484,
-        "pred_V_burden": 0.26941747572815533,
-        "af_burden": 0.0
+        "pred_V_burden": 0.26990291262135924,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "63",
         "beats": 3485,
-        "accuracy": 0.8708751793400287,
-        "consistency": 0.9928810596466064,
-        "pred_F_fraction": 0.08637015781922525,
+        "accuracy": 0.8895265423242468,
+        "pred_F_fraction": 0.06944045911047346,
+        "unstable": 0.06818181818181818,
+        "early": 0.08206599713055954,
+        "consistency": 0.9928809404373169,
+        "patterns": 1,
         "true_S_burden": 0.06915351506456241,
-        "pred_S_burden": 0.09038737446197992,
+        "pred_S_burden": 0.08321377331420372,
         "true_V_burden": 0.040459110473457675,
-        "pred_V_burden": 0.013199426111908177,
-        "af_burden": 0.05078909612625538
+        "pred_V_burden": 0.013773314203730272,
+        "af_burden": 0.05078909612625538,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "64",
         "beats": 2258,
-        "accuracy": 0.6395039858281665,
-        "consistency": 0.9239072799682617,
-        "pred_F_fraction": 0.19486271036315322,
+        "accuracy": 0.6412754650132861,
+        "pred_F_fraction": 0.19530558015943314,
+        "unstable": 0.35714285714285715,
+        "early": 0.3091231178033658,
+        "consistency": 0.9239073395729065,
+        "patterns": 1,
         "true_S_burden": 0.27812223206377323,
-        "pred_S_burden": 0.18600531443755536,
+        "pred_S_burden": 0.18024800708591673,
         "true_V_burden": 0.13596102745792737,
-        "pred_V_burden": 0.09787422497785651,
-        "af_burden": 0.3432240921169176
+        "pred_V_burden": 0.10274579273693533,
+        "af_burden": 0.3432240921169176,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "65",
         "beats": 1933,
         "accuracy": 0.9984480082772892,
-        "consistency": 0.9785380959510803,
         "pred_F_fraction": 0.0,
+        "unstable": 0.00883489784649365,
+        "early": 0.02379720641489912,
+        "consistency": 0.9785380363464355,
+        "patterns": 1,
         "true_S_burden": 0.021210553543714435,
         "pred_S_burden": 0.022762545266425245,
         "true_V_burden": 0.002586652871184687,
         "pred_V_burden": 0.0010346611484738748,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "66",
         "beats": 1818,
         "accuracy": 0.9983498349834984,
-        "consistency": 0.988426923751831,
         "pred_F_fraction": 0.0,
+        "unstable": 0.002354326074161271,
+        "early": 0.02585258525852585,
+        "consistency": 0.988426923751831,
+        "patterns": 1,
         "true_S_burden": 0.022002200220022004,
         "pred_S_burden": 0.023652365236523653,
         "true_V_burden": 0.0038503850385038503,
         "pred_V_burden": 0.0022002200220022,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "67",
         "beats": 2880,
-        "accuracy": 0.8260416666666667,
-        "consistency": 0.960086464881897,
-        "pred_F_fraction": 0.15243055555555557,
+        "accuracy": 0.8486111111111111,
+        "pred_F_fraction": 0.1326388888888889,
+        "unstable": 0.17698744769874478,
+        "early": 0.07604166666666666,
+        "consistency": 0.9600865840911865,
+        "patterns": 1,
         "true_S_burden": 0.01840277777777778,
-        "pred_S_burden": 0.025347222222222222,
+        "pred_S_burden": 0.021875,
         "true_V_burden": 0.11909722222222222,
-        "pred_V_burden": 0.08680555555555555,
-        "af_burden": 0.0
+        "pred_V_burden": 0.10034722222222223,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "68",
         "beats": 1957,
-        "accuracy": 0.7250894225855902,
+        "accuracy": 0.7358201328564129,
+        "pred_F_fraction": 0.23096576392437404,
+        "unstable": 0.312133072407045,
+        "early": 0.21001532958610117,
         "consistency": 0.9419640898704529,
-        "pred_F_fraction": 0.24169647419519674,
+        "patterns": 1,
         "true_S_burden": 0.20388349514563106,
-        "pred_S_burden": 0.20235053653551355,
+        "pred_S_burden": 0.2003065917220235,
         "true_V_burden": 0.027593254982115484,
-        "pred_V_burden": 0.03781297904956566,
-        "af_burden": 0.0025549310168625446
+        "pred_V_burden": 0.0398569238630557,
+        "af_burden": 0.0025549310168625446,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "69",
         "beats": 2221,
         "accuracy": 0.9918955425484016,
-        "consistency": 0.9856846332550049,
         "pred_F_fraction": 0.0,
+        "unstable": 0.011910433539780848,
+        "early": 0.021611886537595677,
+        "consistency": 0.9856846332550049,
+        "patterns": 1,
         "true_S_burden": 0.01170643854119766,
         "pred_S_burden": 0.01936064835659613,
         "true_V_burden": 0.012156686177397569,
         "pred_V_burden": 0.005402971634398919,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "7",
         "beats": 1940,
-        "accuracy": 0.9912371134020619,
-        "consistency": 0.9876422882080078,
+        "accuracy": 0.993298969072165,
         "pred_F_fraction": 0.0,
+        "unstable": 0.04253056884635832,
+        "early": 0.010824742268041237,
+        "consistency": 0.9876423478126526,
+        "patterns": 1,
         "true_S_burden": 0.014948453608247423,
         "pred_S_burden": 0.011855670103092783,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.005670103092783505,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0036082474226804126,
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "70",
         "beats": 2687,
-        "accuracy": 0.5169333829549684,
-        "consistency": 0.8933508396148682,
-        "pred_F_fraction": 0.4681801265351693,
+        "accuracy": 0.7901004838109416,
+        "pred_F_fraction": 0.20096762188314105,
+        "unstable": 0.22956436612824277,
+        "early": 0.10941570524748791,
+        "consistency": 0.8933507800102234,
+        "patterns": 2,
         "true_S_burden": 0.04652028284331969,
-        "pred_S_burden": 0.04875325641979903,
+        "pred_S_burden": 0.05173055452177149,
         "true_V_burden": 0.07815407517677707,
-        "pred_V_burden": 0.08075921101600297,
-        "af_burden": 0.0026051358392259025
+        "pred_V_burden": 0.07629326386304429,
+        "af_burden": 0.0026051358392259025,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "71",
         "beats": 2311,
-        "accuracy": 0.4898312418866292,
+        "accuracy": 0.508870618779749,
+        "pred_F_fraction": 0.4690610125486802,
+        "unstable": 0.47025226082817706,
+        "early": 0.040242319342276074,
         "consistency": 0.9019275903701782,
-        "pred_F_fraction": 0.4868022501081783,
+        "patterns": 1,
         "true_S_burden": 0.02942449156209433,
-        "pred_S_burden": 0.011683254002596278,
+        "pred_S_burden": 0.01038511466897447,
         "true_V_burden": 0.023366508005192556,
-        "pred_V_burden": 0.04370402423193423,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0441367373431415,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "72",
         "beats": 1707,
         "accuracy": 0.9203280609256005,
-        "consistency": 0.9762693047523499,
         "pred_F_fraction": 0.0,
+        "unstable": 0.022920203735144314,
+        "early": 0.1195079086115993,
+        "consistency": 0.9762693643569946,
+        "patterns": 1,
         "true_S_burden": 0.08904510837727006,
-        "pred_S_burden": 0.10779144698301113,
+        "pred_S_burden": 0.1054481546572935,
         "true_V_burden": 0.053309900410076154,
         "pred_V_burden": 0.007029876977152899,
-        "af_burden": 0.08670181605155243
+        "af_burden": 0.08670181605155243,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "73",
         "beats": 2172,
-        "accuracy": 0.6569981583793738,
-        "consistency": 0.9573335647583008,
-        "pred_F_fraction": 0.32320441988950277,
+        "accuracy": 0.8812154696132597,
+        "pred_F_fraction": 0.09944751381215469,
+        "unstable": 0.07498660953401179,
+        "early": 0.07550644567219153,
+        "consistency": 0.957333505153656,
+        "patterns": 2,
         "true_S_burden": 0.03406998158379374,
-        "pred_S_burden": 0.05110497237569061,
+        "pred_S_burden": 0.05202578268876611,
         "true_V_burden": 0.04465930018416206,
-        "pred_V_burden": 0.026703499079189688,
-        "af_burden": 0.0
+        "pred_V_burden": 0.026243093922651933,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "74",
         "beats": 2604,
-        "accuracy": 0.8997695852534562,
+        "accuracy": 0.9066820276497696,
+        "pred_F_fraction": 0.06797235023041474,
+        "unstable": 0.07025495750708215,
+        "early": 0.141321044546851,
         "consistency": 0.9671768546104431,
-        "pred_F_fraction": 0.07642089093701997,
+        "patterns": 1,
         "true_S_burden": 0.10637480798771122,
-        "pred_S_burden": 0.10291858678955453,
+        "pred_S_burden": 0.10138248847926268,
         "true_V_burden": 0.07949308755760369,
-        "pred_V_burden": 0.08832565284178187,
-        "af_burden": 0.0
+        "pred_V_burden": 0.09254992319508448,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "75",
         "beats": 2840,
-        "accuracy": 0.6172535211267606,
+        "accuracy": 0.6411971830985915,
+        "pred_F_fraction": 0.2140845070422535,
+        "unstable": 0.3699360341151386,
+        "early": 0.2757042253521127,
         "consistency": 0.9291902780532837,
-        "pred_F_fraction": 0.22535211267605634,
+        "patterns": 1,
         "true_S_burden": 0.1841549295774648,
-        "pred_S_burden": 0.23556338028169013,
+        "pred_S_burden": 0.21830985915492956,
         "true_V_burden": 0.20316901408450705,
-        "pred_V_burden": 0.08133802816901409,
-        "af_burden": 0.00528169014084507
+        "pred_V_burden": 0.10070422535211268,
+        "af_burden": 0.00528169014084507,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "76",
         "beats": 2526,
-        "accuracy": 0.5918448139350753,
+        "accuracy": 0.6013460015835312,
+        "pred_F_fraction": 0.20783847980997625,
+        "unstable": 0.2783661119515885,
+        "early": 0.19754552652414886,
         "consistency": 0.9511063098907471,
-        "pred_F_fraction": 0.2173396674584323,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.16983372921615203,
+        "pred_S_burden": 0.16943784639746634,
         "true_V_burden": 0.13380839271575615,
-        "pred_V_burden": 0.015043547110055424,
-        "af_burden": 0.1955661124307205
+        "pred_V_burden": 0.015439429928741092,
+        "af_burden": 0.1955661124307205,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "77",
         "beats": 2344,
         "accuracy": 0.9091296928327645,
-        "consistency": 0.9809500575065613,
         "pred_F_fraction": 0.07721843003412969,
+        "unstable": 0.030317613089509143,
+        "early": 0.05247440273037542,
+        "consistency": 0.980950117111206,
+        "patterns": 1,
         "true_S_burden": 0.034129692832764506,
         "pred_S_burden": 0.043515358361774746,
         "true_V_burden": 0.022610921501706484,
         "pred_V_burden": 0.013225255972696246,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "8",
         "beats": 1772,
-        "accuracy": 0.9937923250564334,
-        "consistency": 0.9921649694442749,
+        "accuracy": 0.9932279909706546,
         "pred_F_fraction": 0.0,
+        "unstable": 0.004043905257076834,
+        "early": 0.007900677200902935,
+        "consistency": 0.9921648502349854,
+        "patterns": 1,
         "true_S_burden": 0.011286681715575621,
-        "pred_S_burden": 0.014108352144469526,
+        "pred_S_burden": 0.013544018058690745,
         "true_V_burden": 0.004514672686230248,
         "pred_V_burden": 0.0,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "9",
         "beats": 2542,
-        "accuracy": 0.6443745082612117,
-        "consistency": 0.9700624346733093,
-        "pred_F_fraction": 0.3190401258851298,
+        "accuracy": 0.6498819826907947,
+        "pred_F_fraction": 0.3174665617623918,
+        "unstable": 0.3558037495013961,
+        "early": 0.003933910306845004,
+        "consistency": 0.9700624942779541,
+        "patterns": 1,
         "true_S_burden": 0.044059795436664044,
-        "pred_S_burden": 0.03776553894571204,
+        "pred_S_burden": 0.03304484657749803,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.01966955153422502,
-        "af_burden": 0.0
+        "pred_V_burden": 0.020456333595594022,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       }
     ]
   },
   "INCART": {
     "fusion_gate": {
       "before": {
-        "accuracy": 0.7108,
-        "macro_f1": 0.4588,
+        "accuracy": 0.7697,
+        "macro_f1": 0.4879,
         "F": {
           "support": 219,
-          "sensitivity": 0.4795,
-          "ppv": 0.003,
-          "f1": 0.0059
+          "sensitivity": 0.484,
+          "ppv": 0.0037,
+          "f1": 0.0074
         }
       },
       "after": {
-        "accuracy": 0.7287,
-        "macro_f1": 0.4608,
+        "accuracy": 0.7862,
+        "macro_f1": 0.4902,
         "F": {
           "support": 219,
-          "sensitivity": 0.4749,
-          "ppv": 0.0033,
-          "f1": 0.0065
+          "sensitivity": 0.4795,
+          "ppv": 0.0041,
+          "f1": 0.0082
         }
       },
       "false_F": [
-        35378,
-        31828
+        28427,
+        25379
       ]
     },
-    "reliability": {
-      "recordings": 75,
+    "f_scaling": {
+      "macro_f1": 0.5017,
+      "F": {
+        "support": 219,
+        "sensitivity": 0.0,
+        "ppv": 0.0,
+        "f1": 0.0
+      }
+    },
+    "warning": {
+      "flagged": 52,
+      "failing": 46,
+      "failing_flagged": 40,
+      "false_flags": 12,
+      "accuracy_flagged": 0.737479544203374,
+      "accuracy_trusted": 0.9358459932738026,
+      "auroc": 0.8845577211394303
+    },
+    "consistency_flag": {
       "flagged": 51,
-      "failing": 54,
-      "failing_flagged": 44,
-      "false_flags": 7,
-      "accuracy_flagged": 0.65627944224609,
-      "accuracy_trusted": 0.9193795243019648,
-      "auroc": 0.8571428571428572
+      "failing": 46,
+      "failing_flagged": 40,
+      "false_flags": 11,
+      "accuracy_flagged": 0.7317379561585328,
+      "accuracy_trusted": 0.929493278179938,
+      "auroc": 0.8905547226386807
+    },
+    "groups": {
+      "no warning, no early beats": {
+        "recordings": 8,
+        "accuracy": 0.9573619420947665
+      },
+      "frequent early beats only": {
+        "recordings": 15,
+        "accuracy": 0.9248967592916637
+      },
+      "unstable beats": {
+        "recordings": 52,
+        "accuracy": 0.737479544203374
+      }
+    },
+    "several_patterns": {
+      "recordings": 13,
+      "accuracy": 0.725072167428434
     },
     "burden_category_agreement": {
       "V": {
-        "all": 0.7333333333333333,
-        "trusted": 0.7916666666666666,
-        "flagged": 0.7058823529411765
+        "all": 0.76,
+        "trusted": 0.8695652173913043,
+        "warned": 0.7115384615384616
       },
       "S": {
-        "all": 0.3466666666666667,
-        "trusted": 0.625,
-        "flagged": 0.21568627450980393
+        "all": 0.44,
+        "trusted": 0.6521739130434783,
+        "warned": 0.34615384615384615
       }
     },
     "recordings": [
       {
         "record": "0",
         "beats": 2755,
-        "accuracy": 0.3339382940108893,
+        "accuracy": 0.3778584392014519,
+        "pred_F_fraction": 0.5382940108892922,
+        "unstable": 0.829622458857696,
+        "early": 0.12486388384754991,
         "consistency": 0.6536336541175842,
-        "pred_F_fraction": 0.5528130671506352,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.11143375680580762,
+        "pred_S_burden": 0.07695099818511797,
         "true_V_burden": 0.12486388384754991,
-        "pred_V_burden": 0.079491833030853,
-        "af_burden": 0.0
+        "pred_V_burden": 0.10090744101633393,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "1",
         "beats": 2672,
-        "accuracy": 0.3652694610778443,
-        "consistency": 0.817923367023468,
-        "pred_F_fraction": 0.5437874251497006,
+        "accuracy": 0.42327844311377244,
+        "pred_F_fraction": 0.4883982035928144,
+        "unstable": 0.6637781629116117,
+        "early": 0.1373502994011976,
+        "consistency": 0.8179234266281128,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.0718562874251497,
+        "pred_S_burden": 0.06399700598802395,
         "true_V_burden": 0.08570359281437126,
-        "pred_V_burden": 0.0782185628742515,
-        "af_burden": 0.0
+        "pred_V_burden": 0.09393712574850299,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "10",
         "beats": 2080,
-        "accuracy": 0.8076923076923077,
-        "consistency": 0.9639225006103516,
+        "accuracy": 0.8173076923076923,
         "pred_F_fraction": 0.0,
+        "unstable": 0.05224429727740986,
+        "early": 0.06490384615384616,
+        "consistency": 0.9639225006103516,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.1889423076923077,
+        "pred_S_burden": 0.18028846153846154,
         "true_V_burden": 0.0019230769230769232,
         "pred_V_burden": 0.004326923076923077,
-        "af_burden": 0.020673076923076922
+        "af_burden": 0.020673076923076922,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "11",
         "beats": 2807,
-        "accuracy": 0.9462059137869612,
-        "consistency": 0.9683501124382019,
+        "accuracy": 0.9775561097256857,
         "pred_F_fraction": 0.0,
+        "unstable": 0.1393177737881508,
+        "early": 0.0010687566797292483,
+        "consistency": 0.9683501124382019,
+        "patterns": 1,
         "true_S_burden": 0.0003562522265764161,
-        "pred_S_burden": 0.035268970431065194,
+        "pred_S_burden": 0.00641254007837549,
         "true_V_burden": 0.0021375133594584966,
-        "pred_V_burden": 0.020662629141432135,
-        "af_burden": 0.0
+        "pred_V_burden": 0.01816886355539722,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "12",
         "beats": 2021,
-        "accuracy": 0.859475507174666,
-        "consistency": 0.9869056940078735,
-        "pred_F_fraction": 0.013359722909450767,
+        "accuracy": 0.8738248391885205,
+        "pred_F_fraction": 0.0054428500742206825,
+        "unstable": 0.003303964757709251,
+        "early": 0.21227115289460663,
+        "consistency": 0.9869056344032288,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.1271647699158832,
+        "pred_S_burden": 0.12073231073725878,
         "true_V_burden": 0.11380504700643246,
-        "pred_V_burden": 0.10489856506679862,
-        "af_burden": 0.0
+        "pred_V_burden": 0.11083621969322117,
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "13",
         "beats": 1864,
-        "accuracy": 0.9098712446351931,
-        "consistency": 0.9924281239509583,
-        "pred_F_fraction": 0.01984978540772532,
+        "accuracy": 0.9189914163090128,
+        "pred_F_fraction": 0.022532188841201718,
+        "unstable": 0.007730147575544624,
+        "early": 0.07188841201716738,
+        "consistency": 0.9924280643463135,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.06920600858369098,
+        "pred_S_burden": 0.05740343347639485,
         "true_V_burden": 0.034334763948497854,
-        "pred_V_burden": 0.021995708154506438,
-        "af_burden": 0.000536480686695279
+        "pred_V_burden": 0.032188841201716736,
+        "af_burden": 0.000536480686695279,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "14",
         "beats": 2633,
-        "accuracy": 0.9908849221420433,
-        "consistency": 0.9772754311561584,
+        "accuracy": 0.996202050892518,
         "pred_F_fraction": 0.0,
+        "unstable": 0.025510204081632654,
+        "early": 0.001139384732244588,
+        "consistency": 0.9772753119468689,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.0072161033042157235,
+        "pred_S_burden": 0.0018989745537409798,
         "true_V_burden": 0.001139384732244588,
         "pred_V_burden": 0.002658564375237372,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "15",
         "beats": 1520,
-        "accuracy": 0.9815789473684211,
-        "consistency": 0.9672964811325073,
+        "accuracy": 0.9881578947368421,
         "pred_F_fraction": 0.0,
+        "unstable": 0.11512261580381472,
+        "early": 0.005263157894736842,
+        "consistency": 0.9672963619232178,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.0125,
+        "pred_S_burden": 0.006578947368421052,
         "true_V_burden": 0.0013157894736842105,
-        "pred_V_burden": 0.006578947368421052,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0059210526315789476,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "16",
         "beats": 1671,
-        "accuracy": 0.8599640933572711,
-        "consistency": 0.9747079014778137,
-        "pred_F_fraction": 0.12447636146020347,
+        "accuracy": 0.8689407540394973,
+        "pred_F_fraction": 0.11549970077797726,
+        "unstable": 0.0836627140974967,
+        "early": 0.031119090365050867,
+        "consistency": 0.974707841873169,
+        "patterns": 1,
         "true_S_burden": 0.0,
         "pred_S_burden": 0.01376421304608019,
         "true_V_burden": 0.01615798922800718,
         "pred_V_burden": 0.017953321364452424,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "17",
         "beats": 3082,
-        "accuracy": 0.5139519792342635,
-        "consistency": 0.8721969127655029,
-        "pred_F_fraction": 0.3403634003893576,
+        "accuracy": 0.6885139519792343,
+        "pred_F_fraction": 0.2034393251135626,
+        "unstable": 0.4803963808703145,
+        "early": 0.0791693705386113,
+        "consistency": 0.8721967935562134,
+        "patterns": 2,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.13238157040882545,
+        "pred_S_burden": 0.09506813757300454,
         "true_V_burden": 0.11875405580791694,
         "pred_V_burden": 0.14081765087605452,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "18",
         "beats": 2060,
-        "accuracy": 0.795631067961165,
+        "accuracy": 0.804368932038835,
+        "pred_F_fraction": 0.09077669902912622,
+        "unstable": 0.46,
+        "early": 0.4354368932038835,
         "consistency": 0.854090690612793,
-        "pred_F_fraction": 0.10436893203883495,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.0970873786407767,
+        "pred_S_burden": 0.10145631067961165,
         "true_V_burden": 0.4121359223300971,
-        "pred_V_burden": 0.36893203883495146,
-        "af_burden": 0.028640776699029126
+        "pred_V_burden": 0.3635922330097087,
+        "af_burden": 0.028640776699029126,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "19",
         "beats": 2650,
-        "accuracy": 0.859622641509434,
+        "accuracy": 0.8626415094339622,
+        "pred_F_fraction": 0.11320754716981132,
+        "unstable": 0.11216825237856785,
+        "early": 0.10415094339622641,
         "consistency": 0.966777503490448,
-        "pred_F_fraction": 0.11547169811320755,
+        "patterns": 1,
         "true_S_burden": 0.06754716981132075,
-        "pred_S_burden": 0.08754716981132075,
+        "pred_S_burden": 0.08566037735849057,
         "true_V_burden": 0.04150943396226415,
-        "pred_V_burden": 0.04377358490566038,
-        "af_burden": 0.0
+        "pred_V_burden": 0.04339622641509434,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "2",
         "beats": 2450,
-        "accuracy": 0.8395918367346938,
+        "accuracy": 0.913469387755102,
+        "pred_F_fraction": 0.06653061224489797,
+        "unstable": 0.07492931196983978,
+        "early": 0.05183673469387755,
         "consistency": 0.9791949987411499,
-        "pred_F_fraction": 0.09795918367346938,
+        "patterns": 1,
         "true_S_burden": 0.0008163265306122449,
-        "pred_S_burden": 0.06326530612244897,
+        "pred_S_burden": 0.020816326530612245,
         "true_V_burden": 0.05102040816326531,
-        "pred_V_burden": 0.030612244897959183,
-        "af_burden": 0.0
+        "pred_V_burden": 0.03918367346938775,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "20",
         "beats": 2182,
-        "accuracy": 0.9555453712190651,
-        "consistency": 0.9862350225448608,
+        "accuracy": 0.9615032080659945,
         "pred_F_fraction": 0.0,
+        "unstable": 0.020496894409937887,
+        "early": 0.09120073327222732,
+        "consistency": 0.9862349033355713,
+        "patterns": 1,
         "true_S_burden": 0.04766269477543538,
-        "pred_S_burden": 0.09028414298808432,
+        "pred_S_burden": 0.0838680109990834,
         "true_V_burden": 0.0036663611365719525,
-        "pred_V_burden": 0.005499541704857928,
-        "af_burden": 0.0
+        "pred_V_burden": 0.005041246562786435,
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "21",
         "beats": 3124,
-        "accuracy": 0.8146606914212549,
+        "accuracy": 0.8143405889884763,
+        "pred_F_fraction": 0.15492957746478872,
+        "unstable": 0.16729877791824693,
+        "early": 0.09314980793854033,
         "consistency": 0.9640949964523315,
-        "pred_F_fraction": 0.1437259923175416,
+        "patterns": 1,
         "true_S_burden": 0.03969270166453265,
-        "pred_S_burden": 0.07458386683738796,
+        "pred_S_burden": 0.06562099871959026,
         "true_V_burden": 0.05921895006402049,
-        "pred_V_burden": 0.062419974391805376,
-        "af_burden": 0.0
+        "pred_V_burden": 0.05921895006402049,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "22",
         "beats": 2203,
-        "accuracy": 0.9927371765773945,
-        "consistency": 0.9655229449272156,
+        "accuracy": 0.9959146618247844,
         "pred_F_fraction": 0.0,
+        "unstable": 0.08306112925804947,
+        "early": 0.006354970494779845,
+        "consistency": 0.9655229449272156,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.006808896958692692,
+        "pred_S_burden": 0.0040853381752156154,
         "true_V_burden": 0.005901044030866999,
-        "pred_V_burden": 0.003631411711302769,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0040853381752156154,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "23",
         "beats": 2569,
-        "accuracy": 0.9820942000778513,
-        "consistency": 0.9608567953109741,
+        "accuracy": 0.9894900739587388,
         "pred_F_fraction": 0.0,
+        "unstable": 0.08058608058608059,
+        "early": 0.0027247956403269754,
+        "consistency": 0.9608567953109741,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.014013234721681589,
+        "pred_S_burden": 0.006617360840794083,
         "true_V_burden": 0.0023355391202802647,
         "pred_V_burden": 0.004281821720513819,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "24",
         "beats": 1710,
-        "accuracy": 0.8649122807017544,
-        "consistency": 0.9654958248138428,
+        "accuracy": 0.9748538011695906,
         "pred_F_fraction": 0.0,
+        "unstable": 0.14048606994665086,
+        "early": 0.004093567251461989,
+        "consistency": 0.9654958248138428,
+        "patterns": 2,
         "true_S_burden": 0.0011695906432748538,
-        "pred_S_burden": 0.12105263157894737,
+        "pred_S_burden": 0.01871345029239766,
         "true_V_burden": 0.0029239766081871343,
-        "pred_V_burden": 0.0152046783625731,
-        "af_burden": 0.0
+        "pred_V_burden": 0.00760233918128655,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "25",
         "beats": 1507,
-        "accuracy": 0.8347710683477106,
-        "consistency": 0.9746577739715576,
+        "accuracy": 0.9807564698075647,
         "pred_F_fraction": 0.0,
+        "unstable": 0.04975124378109453,
+        "early": 0.0092899800928998,
+        "consistency": 0.9746577739715576,
+        "patterns": 2,
         "true_S_burden": 0.0046449900464499,
-        "pred_S_burden": 0.16854678168546783,
+        "pred_S_burden": 0.023888520238885203,
         "true_V_burden": 0.0026542800265428003,
-        "pred_V_burden": 0.003981420039814201,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0026542800265428003,
+        "af_burden": 0.0,
+        "causes": [
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "26",
         "beats": 2603,
-        "accuracy": 0.517479830964272,
+        "accuracy": 0.4809834805993085,
+        "pred_F_fraction": 0.5170956588551671,
+        "unstable": 0.9236111111111112,
+        "early": 0.276219746446408,
         "consistency": 0.3811739981174469,
-        "pred_F_fraction": 0.4771417595082597,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.004994237418363427,
+        "pred_S_burden": 0.001920860545524395,
         "true_V_burden": 0.276219746446408,
-        "pred_V_burden": 0.276219746446408,
-        "af_burden": 0.0
+        "pred_V_burden": 0.2758355743373031,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "27",
         "beats": 1715,
-        "accuracy": 0.8892128279883382,
+        "accuracy": 0.8868804664723032,
+        "pred_F_fraction": 0.05072886297376093,
+        "unstable": 0.03127443315089914,
+        "early": 0.027988338192419825,
         "consistency": 0.9860503077507019,
-        "pred_F_fraction": 0.04723032069970846,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.052478134110787174,
+        "pred_S_burden": 0.05131195335276968,
         "true_V_burden": 0.0023323615160349854,
         "pred_V_burden": 0.013411078717201166,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "28",
         "beats": 2618,
-        "accuracy": 0.4831932773109244,
+        "accuracy": 0.533231474407945,
+        "pred_F_fraction": 0.372803666921314,
+        "unstable": 0.8319783197831978,
+        "early": 0.28533231474407944,
         "consistency": 0.6749215126037598,
-        "pred_F_fraction": 0.40718105423987777,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.09969442322383498,
+        "pred_S_burden": 0.08441558441558442,
         "true_V_burden": 0.29908326967150495,
-        "pred_V_burden": 0.22536287242169595,
-        "af_burden": 0.029029793735676088
+        "pred_V_burden": 0.2387318563789152,
+        "af_burden": 0.029029793735676088,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "29",
         "beats": 2460,
-        "accuracy": 0.5463414634146342,
-        "consistency": 0.7667697072029114,
-        "pred_F_fraction": 0.333739837398374,
+        "accuracy": 0.6117886178861789,
+        "pred_F_fraction": 0.29308943089430894,
+        "unstable": 0.6531483457844184,
+        "early": 0.29796747967479675,
+        "consistency": 0.7667696475982666,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.11829268292682926,
+        "pred_S_burden": 0.091869918699187,
         "true_V_burden": 0.30691056910569103,
-        "pred_V_burden": 0.23617886178861788,
-        "af_burden": 0.0
+        "pred_V_burden": 0.2601626016260163,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "3",
         "beats": 2422,
-        "accuracy": 0.1754748142031379,
+        "accuracy": 0.7489677952105698,
+        "pred_F_fraction": 0.236168455821635,
+        "unstable": 0.25390266299357206,
+        "early": 0.04252683732452518,
         "consistency": 0.8499881625175476,
-        "pred_F_fraction": 0.7906688687035508,
+        "patterns": 3,
         "true_S_burden": 0.006606110652353427,
-        "pred_S_burden": 0.04252683732452518,
+        "pred_S_burden": 0.023534269199009084,
         "true_V_burden": 0.04995871180842279,
-        "pred_V_burden": 0.04128819157720892,
-        "af_burden": 0.0
+        "pred_V_burden": 0.04252683732452518,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "30",
         "beats": 3207,
-        "accuracy": 0.6423448705955722,
+        "accuracy": 0.6838166510757717,
+        "pred_F_fraction": 0.18646710321172436,
+        "unstable": 0.9736147757255936,
+        "early": 0.39133146242594324,
         "consistency": 0.5457173585891724,
-        "pred_F_fraction": 0.20673526660430308,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.14780168381665107,
+        "pred_S_burden": 0.1244153414405987,
         "true_V_burden": 0.42531961334580604,
-        "pred_V_burden": 0.30464608668537574,
-        "af_burden": 0.006548175865294668
+        "pred_V_burden": 0.31836607421265983,
+        "af_burden": 0.006548175865294668,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "31",
         "beats": 1617,
-        "accuracy": 0.8794063079777366,
+        "accuracy": 0.8812615955473099,
+        "pred_F_fraction": 0.06988249845392702,
+        "unstable": 0.0332541567695962,
+        "early": 0.06060606060606061,
         "consistency": 0.9593842029571533,
-        "pred_F_fraction": 0.07111935683364255,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.04700061842918986,
+        "pred_S_burden": 0.04638218923933209,
         "true_V_burden": 0.03525046382189239,
         "pred_V_burden": 0.03525046382189239,
-        "af_burden": 0.009894867037724181
+        "af_burden": 0.009894867037724181,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "32",
         "beats": 1835,
-        "accuracy": 0.9858310626702997,
-        "consistency": 0.9713166356086731,
+        "accuracy": 0.9901907356948229,
         "pred_F_fraction": 0.0,
+        "unstable": 0.01904761904761905,
+        "early": 0.3226158038147139,
+        "consistency": 0.9713166356086731,
+        "patterns": 1,
         "true_S_burden": 0.32098092643051773,
-        "pred_S_burden": 0.32697547683923706,
+        "pred_S_burden": 0.3242506811989101,
         "true_V_burden": 0.0005449591280653951,
-        "pred_V_burden": 0.0038147138964577656,
-        "af_burden": 0.0010899182561307902
+        "pred_V_burden": 0.0027247956403269754,
+        "af_burden": 0.0010899182561307902,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "33",
         "beats": 1963,
-        "accuracy": 0.9801324503311258,
+        "accuracy": 0.9490575649516046,
+        "pred_F_fraction": 0.033112582781456956,
+        "unstable": 0.022972972972972974,
+        "early": 0.27457972491085075,
         "consistency": 0.9787787199020386,
-        "pred_F_fraction": 0.0,
+        "patterns": 1,
         "true_S_burden": 0.2730514518593989,
-        "pred_S_burden": 0.27356087620988284,
+        "pred_S_burden": 0.2705043301069791,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.00967906265919511,
-        "af_burden": 0.0
+        "pred_V_burden": 0.010188487009679063,
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "34",
         "beats": 3674,
-        "accuracy": 0.4501905280348394,
+        "accuracy": 0.6848121937942298,
+        "pred_F_fraction": 0.24142623843222646,
+        "unstable": 0.41588330632090764,
+        "early": 0.05770277626565052,
         "consistency": 0.787009596824646,
-        "pred_F_fraction": 0.28715296679368535,
+        "patterns": 3,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.26510615133369625,
+        "pred_S_burden": 0.07294501905280348,
         "true_V_burden": 0.12438758845944475,
-        "pred_V_burden": 0.08356015242242787,
-        "af_burden": 0.0
+        "pred_V_burden": 0.09036472509526401,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "35",
         "beats": 3909,
-        "accuracy": 0.31312356101304684,
-        "consistency": 0.7074235677719116,
-        "pred_F_fraction": 0.2949603479150678,
+        "accuracy": 0.5732924021488872,
+        "pred_F_fraction": 0.19570222563315426,
+        "unstable": 0.6256441345862382,
+        "early": 0.0450243028907649,
+        "consistency": 0.7074235081672668,
+        "patterns": 3,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.39242773087746224,
+        "pred_S_burden": 0.22767971348170887,
         "true_V_burden": 0.11511895625479662,
-        "pred_V_burden": 0.08186236889229982,
-        "af_burden": 0.0
+        "pred_V_burden": 0.08749040675364543,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "36",
         "beats": 2459,
-        "accuracy": 0.9141927612850752,
+        "accuracy": 0.9198861325742171,
+        "pred_F_fraction": 0.07401382675884506,
+        "unstable": 0.1282051282051282,
+        "early": 0.17974786498576656,
         "consistency": 0.9901832938194275,
-        "pred_F_fraction": 0.07482716551443676,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.0028466856445709637,
+        "pred_S_burden": 0.0008133387555917039,
         "true_V_burden": 0.1838145587637251,
-        "pred_V_burden": 0.19113460756405043,
-        "af_burden": 0.0
+        "pred_V_burden": 0.1886945912972753,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "37",
         "beats": 2696,
-        "accuracy": 0.8508902077151336,
+        "accuracy": 0.8720326409495549,
+        "pred_F_fraction": 0.12129080118694362,
+        "unstable": 0.14705882352941177,
+        "early": 0.1925074183976261,
         "consistency": 0.9591488838195801,
-        "pred_F_fraction": 0.14169139465875372,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.005934718100890208,
+        "pred_S_burden": 0.0051928783382789315,
         "true_V_burden": 0.20140949554896143,
-        "pred_V_burden": 0.19695845697329376,
-        "af_burden": 0.0025964391691394658
+        "pred_V_burden": 0.19770029673590506,
+        "af_burden": 0.0025964391691394658,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "38",
         "beats": 1773,
-        "accuracy": 0.8313592780597857,
-        "consistency": 0.9744255542755127,
-        "pred_F_fraction": 0.1562323745064862,
+        "accuracy": 0.9402143260011281,
+        "pred_F_fraction": 0.049633389734912575,
+        "unstable": 0.05540661304736372,
+        "early": 0.17653694303440495,
+        "consistency": 0.9744256138801575,
+        "patterns": 2,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.009024252679075015,
+        "pred_S_burden": 0.00676818950930626,
         "true_V_burden": 0.17653694303440495,
-        "pred_V_burden": 0.17597292724196278,
-        "af_burden": 0.0
+        "pred_V_burden": 0.17653694303440495,
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": false
       },
       {
         "record": "39",
         "beats": 2664,
-        "accuracy": 0.33783783783783783,
-        "consistency": 0.8551476001739502,
-        "pred_F_fraction": 0.5758258258258259,
+        "accuracy": 0.6775525525525525,
+        "pred_F_fraction": 0.2747747747747748,
+        "unstable": 0.4006488240064882,
+        "early": 0.03641141141141141,
+        "consistency": 0.8551475405693054,
+        "patterns": 3,
         "true_S_burden": 0.0022522522522522522,
-        "pred_S_burden": 0.07394894894894895,
+        "pred_S_burden": 0.021021021021021023,
         "true_V_burden": 0.03453453453453453,
-        "pred_V_burden": 0.04391891891891892,
-        "af_burden": 0.0
+        "pred_V_burden": 0.05780780780780781,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "4",
         "beats": 1774,
-        "accuracy": 0.8325817361894025,
+        "accuracy": 0.8596392333709132,
+        "pred_F_fraction": 0.08850056369785794,
+        "unstable": 0.0896700143472023,
+        "early": 0.08117249154453213,
         "consistency": 0.9843176007270813,
-        "pred_F_fraction": 0.10033821871476889,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.06764374295377677,
+        "pred_S_burden": 0.05298759864712514,
         "true_V_burden": 0.13923337091319052,
-        "pred_V_burden": 0.05073280721533258,
-        "af_burden": 0.002818489289740699
+        "pred_V_burden": 0.058624577226606536,
+        "af_burden": 0.002818489289740699,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "40",
         "beats": 1628,
-        "accuracy": 0.8808353808353808,
-        "consistency": 0.9733568429946899,
+        "accuracy": 0.9023341523341524,
         "pred_F_fraction": 0.0,
+        "unstable": 0.025020177562550445,
+        "early": 0.0472972972972973,
+        "consistency": 0.9733567833900452,
+        "patterns": 1,
         "true_S_burden": 0.003071253071253071,
-        "pred_S_burden": 0.11486486486486487,
+        "pred_S_burden": 0.09398034398034398,
         "true_V_burden": 0.0006142506142506142,
-        "pred_V_burden": 0.007371007371007371,
-        "af_burden": 0.0
+        "pred_V_burden": 0.006756756756756757,
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "41",
         "beats": 3107,
-        "accuracy": 0.47988413260379786,
+        "accuracy": 0.5114258126810428,
+        "pred_F_fraction": 0.1268104280656582,
+        "unstable": 0.9890590809628009,
+        "early": 0.4139040875442549,
         "consistency": 0.6045278906822205,
-        "pred_F_fraction": 0.10363694882523335,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.40682330222079177,
+        "pred_S_burden": 0.35114258126810427,
         "true_V_burden": 0.5001609269391696,
-        "pred_V_burden": 0.041519150305761185,
-        "af_burden": 0.002896684905053106
+        "pred_V_burden": 0.09237206308336016,
+        "af_burden": 0.002896684905053106,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "42",
         "beats": 2207,
-        "accuracy": 0.48346171273221566,
-        "consistency": 0.595398485660553,
+        "accuracy": 0.4870865428183054,
         "pred_F_fraction": 0.0,
+        "unstable": 1.0,
+        "early": 0.513819664703217,
+        "consistency": 0.595398485660553,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.5142727684639783,
+        "pred_S_burden": 0.5106479383778886,
         "true_V_burden": 0.50747621205256,
-        "pred_V_burden": 0.00045310376076121433,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0040779338468509285,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "43",
         "beats": 2493,
-        "accuracy": 0.8138788608102687,
-        "consistency": 0.9499044418334961,
-        "pred_F_fraction": 0.18491776975531488,
+        "accuracy": 0.8275170477336542,
+        "pred_F_fraction": 0.17168070597673485,
+        "unstable": 0.2236842105263158,
+        "early": 0.26594464500601683,
+        "consistency": 0.9499045014381409,
+        "patterns": 1,
         "true_S_burden": 0.003208985158443642,
-        "pred_S_burden": 0.003208985158443642,
+        "pred_S_burden": 0.002807862013638187,
         "true_V_burden": 0.273967107902126,
         "pred_V_burden": 0.2743682310469314,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "44",
         "beats": 1926,
-        "accuracy": 0.9299065420560748,
-        "consistency": 0.9841295480728149,
-        "pred_F_fraction": 0.06334371754932502,
+        "accuracy": 0.946521287642783,
+        "pred_F_fraction": 0.04880581516095535,
+        "unstable": 0.008908685968819599,
+        "early": 0.2538940809968847,
+        "consistency": 0.9841296672821045,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.006749740394600207,
+        "pred_S_burden": 0.004672897196261682,
         "true_V_burden": 0.254932502596054,
         "pred_V_burden": 0.2544132917964694,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "45",
         "beats": 2656,
-        "accuracy": 0.8335843373493976,
+        "accuracy": 0.84375,
+        "pred_F_fraction": 0.14834337349397592,
+        "unstable": 0.1897407611693326,
+        "early": 0.13177710843373494,
         "consistency": 0.9576166868209839,
-        "pred_F_fraction": 0.1539909638554217,
+        "patterns": 1,
         "true_S_burden": 0.00037650602409638556,
-        "pred_S_burden": 0.00677710843373494,
+        "pred_S_burden": 0.0037650602409638554,
         "true_V_burden": 0.1588855421686747,
-        "pred_V_burden": 0.16378012048192772,
-        "af_burden": 0.0
+        "pred_V_burden": 0.16189759036144577,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "46",
         "beats": 1951,
-        "accuracy": 0.7867760123013839,
+        "accuracy": 0.8067657611481291,
+        "pred_F_fraction": 0.07637109174782163,
+        "unstable": 0.07419898819561552,
+        "early": 0.1194259354177345,
         "consistency": 0.9700139164924622,
-        "pred_F_fraction": 0.08200922603792926,
+        "patterns": 1,
         "true_S_burden": 0.0005125576627370579,
-        "pred_S_burden": 0.12608918503331626,
+        "pred_S_burden": 0.11122501281394157,
         "true_V_burden": 0.047667862634546386,
-        "pred_V_burden": 0.05228088159917991,
-        "af_burden": 0.0
+        "pred_V_burden": 0.052793439261916965,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "47",
         "beats": 2355,
-        "accuracy": 0.816135881104034,
-        "consistency": 0.9572589993476868,
-        "pred_F_fraction": 0.13885350318471337,
+        "accuracy": 0.8462845010615712,
+        "pred_F_fraction": 0.12484076433121019,
+        "unstable": 0.12024048096192384,
+        "early": 0.11337579617834395,
+        "consistency": 0.957258939743042,
+        "patterns": 1,
         "true_S_burden": 0.0008492569002123143,
-        "pred_S_burden": 0.045859872611464965,
+        "pred_S_burden": 0.029723991507430998,
         "true_V_burden": 0.09978768577494693,
         "pred_V_burden": 0.10021231422505308,
-        "af_burden": 0.0008492569002123143
+        "af_burden": 0.0008492569002123143,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "48",
         "beats": 2145,
-        "accuracy": 0.7622377622377622,
-        "consistency": 0.9812791347503662,
-        "pred_F_fraction": 0.015850815850815853,
+        "accuracy": 0.7827505827505827,
+        "pred_F_fraction": 0.016317016317016316,
+        "unstable": 0.004434589800443459,
+        "early": 0.1431235431235431,
+        "consistency": 0.9812790751457214,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.2219114219114219,
+        "pred_S_burden": 0.20093240093240095,
         "true_V_burden": 0.012587412587412588,
         "pred_V_burden": 0.012587412587412588,
-        "af_burden": 0.04428904428904429
+        "af_burden": 0.04428904428904429,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "49",
         "beats": 2996,
-        "accuracy": 0.8808411214953271,
-        "consistency": 0.9551998972892761,
+        "accuracy": 0.8975300400534045,
         "pred_F_fraction": 0.0,
+        "unstable": 0.09203883495145632,
+        "early": 0.024365821094793058,
+        "consistency": 0.9551998376846313,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.11114819759679573,
+        "pred_S_burden": 0.09445927903871829,
         "true_V_burden": 0.0013351134846461949,
         "pred_V_burden": 0.009345794392523364,
-        "af_burden": 0.0397196261682243
+        "af_burden": 0.0397196261682243,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "5",
         "beats": 2491,
-        "accuracy": 0.9723002810116419,
-        "consistency": 0.9628082513809204,
+        "accuracy": 0.9783219590525893,
         "pred_F_fraction": 0.0,
+        "unstable": 0.09738309738309739,
+        "early": 0.02448815736651947,
+        "consistency": 0.9628082513809204,
+        "patterns": 1,
         "true_S_burden": 0.019269369731031716,
-        "pred_S_burden": 0.035728623042954634,
+        "pred_S_burden": 0.03131272581292654,
         "true_V_burden": 0.0036130068245684463,
-        "pred_V_burden": 0.014050582095543959,
-        "af_burden": 0.0
+        "pred_V_burden": 0.012444801284624649,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "50",
         "beats": 2775,
-        "accuracy": 0.5827027027027027,
+        "accuracy": 0.6288288288288288,
+        "pred_F_fraction": 0.34162162162162163,
+        "unstable": 0.7294015611448396,
+        "early": 0.28540540540540543,
         "consistency": 0.639050304889679,
-        "pred_F_fraction": 0.3643243243243243,
+        "patterns": 1,
         "true_S_burden": 0.001081081081081081,
-        "pred_S_burden": 0.05405405405405406,
+        "pred_S_burden": 0.03063063063063063,
         "true_V_burden": 0.289009009009009,
         "pred_V_burden": 0.28864864864864864,
-        "af_burden": 0.00036036036036036037
+        "af_burden": 0.00036036036036036037,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "51",
         "beats": 1745,
-        "accuracy": 0.994269340974212,
+        "accuracy": 0.9954154727793696,
+        "pred_F_fraction": 0.0040114613180515755,
+        "unstable": 0.002135231316725979,
+        "early": 0.07851002865329514,
         "consistency": 0.9903205633163452,
-        "pred_F_fraction": 0.004584527220630372,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.001146131805157593,
+        "pred_S_burden": 0.0005730659025787965,
         "true_V_burden": 0.07851002865329514,
         "pred_V_burden": 0.07851002865329514,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "52",
         "beats": 2260,
-        "accuracy": 0.5212389380530974,
-        "consistency": 0.6965235471725464,
-        "pred_F_fraction": 0.025221238938053097,
+        "accuracy": 0.5508849557522124,
+        "pred_F_fraction": 0.02566371681415929,
+        "unstable": 1.0,
+        "early": 0.4907079646017699,
+        "consistency": 0.6965234875679016,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.45353982300884954,
+        "pred_S_burden": 0.42345132743362834,
         "true_V_burden": 0.4911504424778761,
-        "pred_V_burden": 0.03938053097345133,
-        "af_burden": 0.0
+        "pred_V_burden": 0.06946902654867257,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "53",
         "beats": 2361,
-        "accuracy": 0.7263871240999576,
-        "consistency": 0.9623722434043884,
-        "pred_F_fraction": 0.21770436255823802,
+        "accuracy": 0.7848369335027531,
+        "pred_F_fraction": 0.18170266836086404,
+        "unstable": 0.25053902544200085,
+        "early": 0.00847098686997035,
+        "consistency": 0.9623723030090332,
+        "patterns": 1,
         "true_S_burden": 0.00042354934349851756,
-        "pred_S_burden": 0.04362558238034731,
+        "pred_S_burden": 0.021177467174925878,
         "true_V_burden": 0.009318085556967387,
-        "pred_V_burden": 0.013130029648454045,
-        "af_burden": 0.0
+        "pred_V_burden": 0.013553578991952562,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "54",
         "beats": 2164,
-        "accuracy": 0.9847504621072088,
-        "consistency": 0.975977897644043,
+        "accuracy": 0.994916820702403,
         "pred_F_fraction": 0.0,
+        "unstable": 0.06302916274694262,
+        "early": 0.0073937153419593345,
+        "consistency": 0.9759778380393982,
+        "patterns": 1,
         "true_S_burden": 0.0004621072088724584,
-        "pred_S_burden": 0.00831792975970425,
+        "pred_S_burden": 0.0023105360443622922,
         "true_V_burden": 0.007855822550831794,
-        "pred_V_burden": 0.013401109057301294,
-        "af_burden": 0.0
+        "pred_V_burden": 0.009704251386321626,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "55",
         "beats": 1703,
-        "accuracy": 0.8978273634762184,
-        "consistency": 0.9833477139472961,
+        "accuracy": 0.9354081033470346,
         "pred_F_fraction": 0.0,
+        "unstable": 0.025226390685640362,
+        "early": 0.040516735173223725,
+        "consistency": 0.9833477139472961,
+        "patterns": 1,
         "true_S_burden": 0.015267175572519083,
-        "pred_S_burden": 0.11626541397533764,
+        "pred_S_burden": 0.07868467410452143,
         "true_V_burden": 0.004110393423370522,
         "pred_V_burden": 0.0011743981209630064,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "56",
         "beats": 2867,
-        "accuracy": 0.6386466689919776,
+        "accuracy": 0.6696895709801186,
+        "pred_F_fraction": 0.2985699337286362,
+        "unstable": 0.3539167254763585,
+        "early": 0.003487966515521451,
         "consistency": 0.9362272620201111,
-        "pred_F_fraction": 0.3188001395186606,
+        "patterns": 1,
         "true_S_burden": 0.0010463899546564353,
-        "pred_S_burden": 0.0247645622602023,
+        "pred_S_burden": 0.014649459365190094,
         "true_V_burden": 0.007324729682595047,
-        "pred_V_burden": 0.02511335891175445,
-        "af_burden": 0.0
+        "pred_V_burden": 0.024415765608650157,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "57",
         "beats": 2323,
-        "accuracy": 0.8958243650452001,
-        "consistency": 0.9857149124145508,
-        "pred_F_fraction": 0.0865260439087387,
+        "accuracy": 0.9040034438226431,
+        "pred_F_fraction": 0.08351269909599655,
+        "unstable": 0.08890845070422536,
+        "early": 0.005165733964700818,
+        "consistency": 0.9857149720191956,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.009900990099009901,
+        "pred_S_burden": 0.005165733964700818,
         "true_V_burden": 0.005165733964700818,
         "pred_V_burden": 0.012053379250968575,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "58",
         "beats": 2146,
-        "accuracy": 0.7315936626281454,
-        "consistency": 0.948650062084198,
-        "pred_F_fraction": 0.22180801491146318,
+        "accuracy": 0.848089468779124,
+        "pred_F_fraction": 0.13466915191053122,
+        "unstable": 0.15883905013192612,
+        "early": 0.032618825722273995,
+        "consistency": 0.9486501216888428,
+        "patterns": 3,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.027958993476234855,
+        "pred_S_burden": 0.006989748369058714,
         "true_V_burden": 0.03774464119291705,
-        "pred_V_burden": 0.056383970177073625,
-        "af_burden": 0.008853681267474371
+        "pred_V_burden": 0.047530288909599254,
+        "af_burden": 0.008853681267474371,
+        "causes": [
+          "unstable beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "59",
         "beats": 2473,
-        "accuracy": 0.6886372826526486,
-        "consistency": 0.940127432346344,
-        "pred_F_fraction": 0.22644561261625556,
+        "accuracy": 0.8544278204609785,
+        "pred_F_fraction": 0.09947432268499798,
+        "unstable": 0.18866171003717472,
+        "early": 0.01940962393853619,
+        "consistency": 0.9401276111602783,
+        "patterns": 2,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.06995551961180752,
+        "pred_S_burden": 0.03517994338859685,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.014961585119288313,
-        "af_burden": 0.0
+        "pred_V_burden": 0.010917913465426607,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "6",
         "beats": 2704,
-        "accuracy": 0.9582100591715976,
-        "consistency": 0.9618257284164429,
+        "accuracy": 0.9630177514792899,
         "pred_F_fraction": 0.0,
+        "unstable": 0.12485368708544674,
+        "early": 0.02403846153846154,
+        "consistency": 0.9618257284164429,
+        "patterns": 1,
         "true_S_burden": 0.02403846153846154,
-        "pred_S_burden": 0.046227810650887574,
+        "pred_S_burden": 0.04105029585798817,
         "true_V_burden": 0.0003698224852071006,
-        "pred_V_burden": 0.01849112426035503,
-        "af_burden": 0.0
+        "pred_V_burden": 0.018121301775147928,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "60",
         "beats": 1452,
-        "accuracy": 0.9972451790633609,
-        "consistency": 0.9944917559623718,
+        "accuracy": 0.9986225895316805,
         "pred_F_fraction": 0.0,
+        "unstable": 0.0007401924500370096,
+        "early": 0.006198347107438017,
+        "consistency": 0.994491696357727,
+        "patterns": 1,
         "true_S_burden": 0.0006887052341597796,
-        "pred_S_burden": 0.003443526170798898,
+        "pred_S_burden": 0.002066115702479339,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.0,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "61",
         "beats": 2267,
-        "accuracy": 0.6003528892809881,
-        "consistency": 0.936285674571991,
-        "pred_F_fraction": 0.37406263784737537,
+        "accuracy": 0.5941773268636965,
+        "pred_F_fraction": 0.12836347595941774,
+        "unstable": 0.1326530612244898,
+        "early": 0.025584472871636524,
+        "consistency": 0.9362855553627014,
+        "patterns": 2,
         "true_S_burden": 0.003970004411116012,
-        "pred_S_burden": 0.031318923687692984,
+        "pred_S_burden": 0.02999558888398765,
         "true_V_burden": 0.3506837229819144,
-        "pred_V_burden": 0.036612262902514334,
-        "af_burden": 0.0
+        "pred_V_burden": 0.014997794441993825,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "62",
         "beats": 1992,
-        "accuracy": 0.9593373493975904,
+        "accuracy": 0.963855421686747,
+        "pred_F_fraction": 0.026606425702811246,
+        "unstable": 0.03508771929824561,
+        "early": 0.03965863453815261,
         "consistency": 0.9887765645980835,
-        "pred_F_fraction": 0.028112449799196786,
+        "patterns": 1,
         "true_S_burden": 0.000502008032128514,
-        "pred_S_burden": 0.010542168674698794,
+        "pred_S_burden": 0.007530120481927711,
         "true_V_burden": 0.06927710843373494,
-        "pred_V_burden": 0.06977911646586345,
-        "af_burden": 0.0
+        "pred_V_burden": 0.06927710843373494,
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "63",
         "beats": 1911,
-        "accuracy": 0.9727891156462585,
+        "accuracy": 0.9769754055468342,
+        "pred_F_fraction": 0.02250130821559393,
+        "unstable": 0.017684887459807074,
+        "early": 0.008895866038723181,
         "consistency": 0.9887286424636841,
-        "pred_F_fraction": 0.02564102564102564,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.0026164311878597592,
+        "pred_S_burden": 0.0015698587127158557,
         "true_V_burden": 0.012035583464154892,
         "pred_V_burden": 0.01098901098901099,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [],
+        "warning": false
       },
       {
         "record": "64",
         "beats": 2662,
-        "accuracy": 0.7306536438767843,
-        "consistency": 0.945963442325592,
-        "pred_F_fraction": 0.19834710743801653,
+        "accuracy": 0.7362885048835462,
+        "pred_F_fraction": 0.20510894064613072,
+        "unstable": 0.3504751257685858,
+        "early": 0.13936889556724266,
+        "consistency": 0.9459633827209473,
+        "patterns": 1,
         "true_S_burden": 0.0018782870022539444,
-        "pred_S_burden": 0.043200601051840724,
+        "pred_S_burden": 0.03493613824192337,
         "true_V_burden": 0.14350112697220135,
-        "pred_V_burden": 0.1652892561983471,
-        "af_burden": 0.0
+        "pred_V_burden": 0.1615326821938392,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "65",
         "beats": 2338,
-        "accuracy": 0.8152266894781864,
+        "accuracy": 0.8156544054747648,
+        "pred_F_fraction": 0.1360136869118905,
+        "unstable": 0.15223880597014924,
+        "early": 0.11420017108639863,
         "consistency": 0.9765139818191528,
-        "pred_F_fraction": 0.1330196749358426,
+        "patterns": 1,
         "true_S_burden": 0.000427715996578272,
-        "pred_S_burden": 0.046193327630453376,
+        "pred_S_burden": 0.04234388366124893,
         "true_V_burden": 0.0855431993156544,
-        "pred_V_burden": 0.08982035928143713,
-        "af_burden": 0.000855431993156544
+        "pred_V_burden": 0.08939264328485885,
+        "af_burden": 0.000855431993156544,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "66",
         "beats": 2973,
-        "accuracy": 0.7036663303060882,
-        "consistency": 0.9091285467147827,
-        "pred_F_fraction": 0.25697948200470905,
+        "accuracy": 0.6834846955936764,
+        "pred_F_fraction": 0.2882610158089472,
+        "unstable": 0.4222222222222222,
+        "early": 0.18365287588294651,
+        "consistency": 0.9091286063194275,
+        "patterns": 1,
         "true_S_burden": 0.0016818028927009755,
-        "pred_S_burden": 0.03229061553985873,
+        "pred_S_burden": 0.02186343760511268,
         "true_V_burden": 0.17860746720484358,
-        "pred_V_burden": 0.1853346787756475,
-        "af_burden": 0.012108980827447022
+        "pred_V_burden": 0.1849983181971073,
+        "af_burden": 0.012108980827447022,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "67",
         "beats": 2642,
-        "accuracy": 0.663890991672975,
+        "accuracy": 0.7959878879636639,
+        "pred_F_fraction": 0.17032551097653292,
+        "unstable": 0.2570194384449244,
+        "early": 0.061317183951551855,
         "consistency": 0.934485912322998,
-        "pred_F_fraction": 0.29977289931869794,
+        "patterns": 2,
         "true_S_burden": 0.000757002271006813,
-        "pred_S_burden": 0.02043906131718395,
+        "pred_S_burden": 0.017789553368660106,
         "true_V_burden": 0.060938682816048445,
         "pred_V_burden": 0.07683573050719152,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats",
+          "2 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "68",
         "beats": 2167,
-        "accuracy": 0.8984771573604061,
+        "accuracy": 0.9058606368251039,
+        "pred_F_fraction": 0.08675588371019843,
+        "unstable": 0.06136986301369863,
+        "early": 0.07798800184586986,
         "consistency": 0.9762091040611267,
-        "pred_F_fraction": 0.09460083064143977,
+        "patterns": 1,
         "true_S_burden": 0.00046146746654360867,
         "pred_S_burden": 0.00046146746654360867,
         "true_V_burden": 0.07706506691278264,
-        "pred_V_burden": 0.08398707891093678,
-        "af_burden": 0.0
+        "pred_V_burden": 0.0844485463774804,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "69",
         "beats": 1664,
-        "accuracy": 0.9963942307692307,
-        "consistency": 0.995287299156189,
+        "accuracy": 0.9969951923076923,
         "pred_F_fraction": 0.0,
+        "unstable": 0.005021520803443328,
+        "early": 0.07572115384615384,
+        "consistency": 0.995287299156189,
+        "patterns": 1,
         "true_S_burden": 0.07572115384615384,
-        "pred_S_burden": 0.07391826923076923,
+        "pred_S_burden": 0.07451923076923077,
         "true_V_burden": 0.0,
-        "pred_V_burden": 0.0030048076923076925,
-        "af_burden": 0.0
+        "pred_V_burden": 0.002403846153846154,
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "7",
         "beats": 2128,
-        "accuracy": 0.6066729323308271,
+        "accuracy": 0.6691729323308271,
+        "pred_F_fraction": 0.2767857142857143,
+        "unstable": 0.49921752738654146,
+        "early": 0.18468045112781956,
         "consistency": 0.8558712005615234,
-        "pred_F_fraction": 0.3167293233082707,
+        "patterns": 1,
         "true_S_burden": 0.0009398496240601503,
-        "pred_S_burden": 0.06719924812030076,
+        "pred_S_burden": 0.044172932330827065,
         "true_V_burden": 0.16447368421052633,
-        "pred_V_burden": 0.16588345864661655,
-        "af_burden": 0.003289473684210526
+        "pred_V_burden": 0.16964285714285715,
+        "af_burden": 0.003289473684210526,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "70",
         "beats": 1668,
-        "accuracy": 0.8735011990407674,
+        "accuracy": 0.8752997601918465,
+        "pred_F_fraction": 0.08093525179856115,
+        "unstable": 0.037383177570093455,
+        "early": 0.06654676258992806,
         "consistency": 0.9931594133377075,
-        "pred_F_fraction": 0.08213429256594725,
+        "patterns": 1,
         "true_S_burden": 0.020983213429256596,
-        "pred_S_burden": 0.01738609112709832,
+        "pred_S_burden": 0.016786570743405275,
         "true_V_burden": 0.0,
         "pred_V_burden": 0.03537170263788969,
-        "af_burden": 0.06534772182254196
+        "af_burden": 0.06534772182254196,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "71",
         "beats": 2268,
-        "accuracy": 0.5621693121693122,
+        "accuracy": 0.5590828924162258,
+        "pred_F_fraction": 0.4144620811287478,
+        "unstable": 0.4801880456682337,
+        "early": 0.16490299823633156,
         "consistency": 0.574651837348938,
-        "pred_F_fraction": 0.4078483245149912,
+        "patterns": 1,
         "true_S_burden": 0.003527336860670194,
-        "pred_S_burden": 0.014109347442680775,
+        "pred_S_burden": 0.011904761904761904,
         "true_V_burden": 0.17019400352733685,
-        "pred_V_burden": 0.14858906525573193,
-        "af_burden": 0.0
+        "pred_V_burden": 0.15211640211640212,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats",
+          "frequent early beats"
+        ],
+        "warning": true
       },
       {
         "record": "72",
         "beats": 1990,
-        "accuracy": 0.9733668341708542,
-        "consistency": 0.9972969889640808,
-        "pred_F_fraction": 0.024120603015075376,
+        "accuracy": 0.9778894472361809,
+        "pred_F_fraction": 0.019597989949748745,
+        "unstable": 0.01809954751131222,
+        "early": 0.05226130653266332,
+        "consistency": 0.997296929359436,
+        "patterns": 1,
         "true_S_burden": 0.016080402010050253,
         "pred_S_burden": 0.0185929648241206,
         "true_V_burden": 0.035175879396984924,
         "pred_V_burden": 0.034170854271356785,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "73",
         "beats": 2403,
-        "accuracy": 0.850187265917603,
+        "accuracy": 0.8818143986683312,
+        "pred_F_fraction": 0.0898876404494382,
+        "unstable": 0.22151277013752455,
+        "early": 0.04910528506034124,
         "consistency": 0.9569782614707947,
-        "pred_F_fraction": 0.11027881814398668,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.018726591760299626,
+        "pred_S_burden": 0.00749063670411985,
         "true_V_burden": 0.1140241364960466,
         "pred_V_burden": 0.1348314606741573,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       },
       {
         "record": "74",
         "beats": 2101,
-        "accuracy": 0.9847691575440266,
+        "accuracy": 0.9876249405045217,
+        "pred_F_fraction": 0.009043312708234174,
+        "unstable": 0.041401273885350316,
+        "early": 0.26368396001903854,
         "consistency": 0.9839931130409241,
-        "pred_F_fraction": 0.011899095668729176,
+        "patterns": 1,
         "true_S_burden": 0.0,
         "pred_S_burden": 0.0,
         "true_V_burden": 0.2912898619704902,
         "pred_V_burden": 0.2946216087577344,
-        "af_burden": 0.0
+        "af_burden": 0.0,
+        "causes": [
+          "frequent early beats"
+        ],
+        "warning": false
       },
       {
         "record": "8",
         "beats": 2987,
-        "accuracy": 0.10244392366923334,
+        "accuracy": 0.4753933712755273,
+        "pred_F_fraction": 0.39671911617007033,
+        "unstable": 0.5918203688853247,
+        "early": 0.031469702042182794,
         "consistency": 0.7828963994979858,
-        "pred_F_fraction": 0.6223635754938065,
+        "patterns": 3,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.24506193505189153,
+        "pred_S_burden": 0.10679611650485436,
         "true_V_burden": 0.013726146635420154,
-        "pred_V_burden": 0.04385671242048878,
-        "af_burden": 0.017408771342484097
+        "pred_V_burden": 0.03481754268496819,
+        "af_burden": 0.017408771342484097,
+        "causes": [
+          "unstable beats",
+          "3 beat patterns"
+        ],
+        "warning": true
       },
       {
         "record": "9",
         "beats": 3680,
-        "accuracy": 0.18804347826086956,
-        "consistency": 0.7688655257225037,
-        "pred_F_fraction": 0.7328804347826087,
+        "accuracy": 0.2866847826086957,
+        "pred_F_fraction": 0.6491847826086956,
+        "unstable": 0.8658156028368794,
+        "early": 0.01875,
+        "consistency": 0.7688655853271484,
+        "patterns": 1,
         "true_S_burden": 0.0,
-        "pred_S_burden": 0.06983695652173913,
+        "pred_S_burden": 0.04157608695652174,
         "true_V_burden": 0.022554347826086958,
-        "pred_V_burden": 0.03125,
-        "af_burden": 0.0
+        "pred_V_burden": 0.04483695652173913,
+        "af_burden": 0.0,
+        "causes": [
+          "unstable beats"
+        ],
+        "warning": true
       }
     ]
   },
   "false_F_by_symbol": {
     "105": {
-      "false_F": 188,
-      "N_class_beats": {
-        "N": 2524
-      },
+      "false_F": 169,
       "false_F_beats": {
-        "N": 188
+        "N": 169
       }
     },
     "111": {
-      "false_F": 304,
-      "N_class_beats": {
-        "L": 2121
-      },
+      "false_F": 130,
       "false_F_beats": {
-        "L": 304
-      }
-    },
-    "117": {
-      "false_F": 857,
-      "N_class_beats": {
-        "N": 1532
-      },
-      "false_F_beats": {
-        "N": 857
-      }
-    },
-    "212": {
-      "false_F": 927,
-      "N_class_beats": {
-        "N": 922,
-        "R": 1824
-      },
-      "false_F_beats": {
-        "N": 917,
-        "R": 10
+        "L": 130
       }
     },
     "214": {
-      "false_F": 139,
-      "N_class_beats": {
-        "L": 2001
-      },
+      "false_F": 126,
       "false_F_beats": {
-        "L": 139
+        "L": 126
       }
     },
     "221": {
-      "false_F": 234,
-      "N_class_beats": {
-        "N": 2029
-      },
+      "false_F": 210,
       "false_F_beats": {
-        "N": 234
+        "N": 210
       }
     },
     "222": {
-      "false_F": 507,
-      "N_class_beats": {
-        "N": 2060,
-        "j": 212
-      },
+      "false_F": 431,
       "false_F_beats": {
-        "N": 419,
+        "N": 343,
         "j": 88
       }
     },
     "228": {
-      "false_F": 174,
-      "N_class_beats": {
-        "N": 1686
-      },
+      "false_F": 125,
       "false_F_beats": {
-        "N": 174
-      }
-    },
-    "231": {
-      "false_F": 318,
-      "N_class_beats": {
-        "N": 314,
-        "R": 1252
-      },
-      "false_F_beats": {
-        "N": 314,
-        "R": 4
+        "N": 125
       }
     },
     "233": {
-      "false_F": 487,
-      "N_class_beats": {
-        "N": 2229
-      },
+      "false_F": 446,
       "false_F_beats": {
-        "N": 487
+        "N": 446
       }
     }
   }

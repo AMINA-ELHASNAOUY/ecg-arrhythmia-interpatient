@@ -1,0 +1,8 @@
+{
+  "chosen": "gradient_boosting",
+  "cv_macro_f1": {
+    "logistic_regression": 0.5396,
+    "logistic_regression_interactions": 0.5284,
+    "gradient_boosting": 0.5544
+  }
+}
