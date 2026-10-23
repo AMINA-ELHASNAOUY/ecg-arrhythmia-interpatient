@@ -293,7 +293,7 @@ Frequent early beats on their own are not a reason to distrust the result: those
 - Features use the whole recording (patient patterns, RR context after the beat), so this is an offline (Holter-style)
   analysis, not a real-time detector.
 
-## Next steps
+## What was built, step by step
 - [x] Ensemble: logistic regression for S detection + CNN for N/V precision
 - [x] Per-patient error analysis (which records fail, and why)
 - [x] External validation on a second database (MIT-BIH Supraventricular Arrhythmia Database)
@@ -304,11 +304,12 @@ Frequent early beats on their own are not a reason to distrust the result: those
 - [x] Label-free reliability flag per recording
 - [x] Several templates per patient (one per conduction pattern) instead of a single median beat
 - [x] Separate the reliability flag into causes (unstable beats vs frequent early beats vs several patterns)
-- [x] Joint rhythm-and-beat model instead of a post-hoc AF rule (tested; the rule transfers better)
+- [x] Joint rhythm-and-beat model instead of a post-hoc AF rule (tested; the rule transfers better on 2 of 3 test sets)
 - [x] More seeds and seed ensembling to reduce CNN variance
-- [ ] Train the rhythm model on more AF patients (e.g. a dedicated AF database) before trying a joint model again
-- [ ] Validate the unstable-beats warning against recordings with known added noise (MIT-BIH Noise Stress Test Database)
-- [ ] A real-time version that only uses past beats
+
+**Beyond the scope of this project:** a learned rhythm model would need more AF patients than MIT-BIH offers, the
+unstable-beats warning could be checked against recordings with known added noise, and a real-time version would have
+to use past beats only.
 
 ## Reproduce
 ```bash
